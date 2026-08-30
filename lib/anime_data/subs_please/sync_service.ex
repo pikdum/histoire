@@ -3,7 +3,7 @@ defmodule AnimeData.SubsPlease.SyncService do
 
   alias AnimeData.SubsPlease.{Client, Importer, Jobs, ScheduleEntry, SchedulePlanner, Show}
 
-  @bulk_spacing_seconds 60
+  @bulk_spacing_seconds 10
 
   def discover do
     with {:ok, index_entries} <- Client.fetch_index() do

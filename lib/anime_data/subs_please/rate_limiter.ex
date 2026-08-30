@@ -9,7 +9,7 @@ defmodule AnimeData.SubsPlease.RateLimiter do
 
   use GenServer
 
-  @default_interval_ms 60_000
+  @default_interval_ms 10_000
 
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
