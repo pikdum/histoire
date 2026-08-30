@@ -2,13 +2,22 @@ defmodule AnimeData.Catalog.Mapping do
   use Ash.Resource,
     otp_app: :anime_data,
     domain: AnimeData.Catalog,
-    extensions: [AshAdmin.Resource],
+    extensions: [AshGraphql.Resource, AshAdmin.Resource],
     data_layer: AshPostgres.DataLayer
 
   postgres do
     schema "public"
     table "mappings"
     repo AnimeData.Repo
+
+    references do
+      reference :subsplease_show, ignore?: true
+      reference :tvdb_series, ignore?: true
+    end
+  end
+
+  graphql do
+    type :mapping
   end
 
   code_interface do
@@ -137,6 +146,22 @@ defmodule AnimeData.Catalog.Mapping do
     end
 
     timestamps()
+  end
+
+  relationships do
+    belongs_to :subsplease_show, AnimeData.SubsPlease.Show do
+      source_attribute :subsplease_id
+      destination_attribute :id
+      define_attribute? false
+      public? true
+    end
+
+    belongs_to :tvdb_series, AnimeData.TVDB.Series do
+      source_attribute :tvdb_id
+      destination_attribute :id
+      define_attribute? false
+      public? true
+    end
   end
 
   identities do

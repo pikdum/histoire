@@ -73,6 +73,11 @@ defmodule AnimeData.SubsPlease.Show do
     has_many :releases, AnimeData.SubsPlease.Release do
       public? true
     end
+
+    has_one :mapping, AnimeData.Catalog.Mapping do
+      destination_attribute :subsplease_id
+      public? true
+    end
   end
 
   identities do

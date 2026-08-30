@@ -2,7 +2,9 @@ defmodule AnimeDataWeb.GraphqlSchema do
   use Absinthe.Schema
 
   use AshGraphql,
-    domains: [AnimeData.SubsPlease]
+    domains: [AnimeData.Catalog, AnimeData.SubsPlease, AnimeData.TVDB],
+    generate_sdl_file: "schema.graphql",
+    auto_generate_sdl_file?: true
 
   import_types Absinthe.Plug.Types
 

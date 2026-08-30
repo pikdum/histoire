@@ -114,5 +114,10 @@ defmodule AnimeData.TVDB.Series do
     has_many :artworks, AnimeData.TVDB.Artwork do
       public? true
     end
+
+    has_one :mapping, AnimeData.Catalog.Mapping do
+      destination_attribute :tvdb_id
+      public? true
+    end
   end
 end

@@ -2,6 +2,289 @@ schema {
   query: RootQueryType
 }
 
+enum MappingSortField {
+  ID
+  SUBSPLEASE_ID
+  TVDB_ID
+  CANDIDATE_TVDB_ID
+  STATUS
+  MATCH_CONFIDENCE
+  MATCH_REASONING
+  MATCH_METHOD
+  MATCHED_AT
+  LAST_ATTEMPTED_AT
+  LAST_ERROR
+  ATTEMPTS
+}
+
+"A keyset page of :mapping"
+type KeysetPageOfMapping {
+  "Total count on all pages"
+  count: Int
+
+  "The records contained in the page"
+  results: [Mapping!]
+
+  "The first keyset in the results"
+  startKeyset: String
+
+  "The last keyset in the results"
+  endKeyset: String
+}
+
+input MappingFilterAttempts {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int!]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input MappingFilterLastError {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input MappingFilterLastAttemptedAt {
+  isNil: Boolean
+  eq: DateTime
+  notEq: DateTime
+  in: [DateTime]
+  lessThan: DateTime
+  greaterThan: DateTime
+  lessThanOrEqual: DateTime
+  greaterThanOrEqual: DateTime
+  isDistinctFrom: DateTime
+  isNotDistinctFrom: DateTime
+  rangeAdjacent: DateTime
+  rangeContains: String
+  rangeOverlaps: DateTime
+}
+
+input MappingFilterMatchedAt {
+  isNil: Boolean
+  eq: DateTime
+  notEq: DateTime
+  in: [DateTime]
+  lessThan: DateTime
+  greaterThan: DateTime
+  lessThanOrEqual: DateTime
+  greaterThanOrEqual: DateTime
+  isDistinctFrom: DateTime
+  isNotDistinctFrom: DateTime
+  rangeAdjacent: DateTime
+  rangeContains: String
+  rangeOverlaps: DateTime
+}
+
+input MappingFilterMatchMethod {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+}
+
+input MappingFilterMatchReasoning {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input MappingFilterMatchConfidence {
+  isNil: Boolean
+  eq: Float
+  notEq: Float
+  in: [Float]
+  lessThan: Float
+  greaterThan: Float
+  lessThanOrEqual: Float
+  greaterThanOrEqual: Float
+  isDistinctFrom: Float
+  isNotDistinctFrom: Float
+  rangeAdjacent: Float
+  rangeContains: String
+  rangeOverlaps: Float
+}
+
+input MappingFilterStatus {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+}
+
+input MappingFilterCandidateTvdbId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input MappingFilterTvdbId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input MappingFilterSubspleaseId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int!]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input MappingFilterId {
+  isNil: Boolean
+  eq: ID
+  notEq: ID
+  in: [ID!]
+  lessThan: ID
+  greaterThan: ID
+  lessThanOrEqual: ID
+  greaterThanOrEqual: ID
+  isDistinctFrom: ID
+  isNotDistinctFrom: ID
+  rangeAdjacent: ID
+  rangeContains: String
+  rangeOverlaps: ID
+}
+
+input MappingFilterInput {
+  and: [MappingFilterInput!]
+  or: [MappingFilterInput!]
+  not: [MappingFilterInput!]
+  id: MappingFilterId
+  subspleaseId: MappingFilterSubspleaseId
+  tvdbId: MappingFilterTvdbId
+  candidateTvdbId: MappingFilterCandidateTvdbId
+  status: MappingFilterStatus
+  matchConfidence: MappingFilterMatchConfidence
+  matchReasoning: MappingFilterMatchReasoning
+  matchMethod: MappingFilterMatchMethod
+  matchedAt: MappingFilterMatchedAt
+  lastAttemptedAt: MappingFilterLastAttemptedAt
+  lastError: MappingFilterLastError
+  attempts: MappingFilterAttempts
+  subspleaseShow: ShowFilterInput
+  tvdbSeries: TvdbSeriesFilterInput
+}
+
+input MappingSortInput {
+  order: SortOrder
+  field: MappingSortField!
+}
+
+type Mapping {
+  id: ID!
+  subspleaseId: Int!
+  tvdbId: Int
+  candidateTvdbId: Int
+  status: String!
+  matchConfidence: Float
+  matchReasoning: String
+  matchMethod: String
+  matchedAt: DateTime
+  lastAttemptedAt: DateTime
+  lastError: String
+  attempts: Int!
+  subspleaseShow: Show
+  tvdbSeries: TvdbSeries
+}
+
+enum SortOrder {
+  DESC
+  DESC_NULLS_FIRST
+  DESC_NULLS_LAST
+  ASC
+  ASC_NULLS_FIRST
+  ASC_NULLS_LAST
+}
+
 enum ScheduleEntrySortField {
   ID
   SLUG
@@ -746,6 +1029,7 @@ input ShowFilterInput {
   imageUrl: ShowFilterImageUrl
   fetchedAt: ShowFilterFetchedAt
   releases: ReleaseFilterInput
+  mapping: MappingFilterInput
 }
 
 input ShowSortInput {
@@ -773,18 +1057,922 @@ type Show {
     "The number of records to skip."
     offset: Int
   ): [Release!]!
+  mapping: Mapping
 }
 
-enum SortOrder {
-  DESC
-  DESC_NULLS_FIRST
-  DESC_NULLS_LAST
-  ASC
-  ASC_NULLS_FIRST
-  ASC_NULLS_LAST
+enum TvdbArtworkSortField {
+  ID
+  ARTWORK_TYPE
+  LANGUAGE
+  IMAGE_URL
+  THUMBNAIL_URL
+  INCLUDES_TEXT
+  SCORE
+  WIDTH
+  HEIGHT
+  SERIES_ID
+}
+
+"A keyset page of :tvdb_artwork"
+type KeysetPageOfTvdbArtwork {
+  "Total count on all pages"
+  count: Int
+
+  "The records contained in the page"
+  results: [TvdbArtwork!]
+
+  "The first keyset in the results"
+  startKeyset: String
+
+  "The last keyset in the results"
+  endKeyset: String
+}
+
+input TvdbArtworkFilterSeriesId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int!]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbArtworkFilterHeight {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbArtworkFilterWidth {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbArtworkFilterScore {
+  isNil: Boolean
+  eq: Float
+  notEq: Float
+  in: [Float]
+  lessThan: Float
+  greaterThan: Float
+  lessThanOrEqual: Float
+  greaterThanOrEqual: Float
+  isDistinctFrom: Float
+  isNotDistinctFrom: Float
+  rangeAdjacent: Float
+  rangeContains: String
+  rangeOverlaps: Float
+}
+
+input TvdbArtworkFilterIncludesText {
+  isNil: Boolean
+  eq: Boolean
+  notEq: Boolean
+  in: [Boolean]
+  lessThan: Boolean
+  greaterThan: Boolean
+  lessThanOrEqual: Boolean
+  greaterThanOrEqual: Boolean
+  isDistinctFrom: Boolean
+  isNotDistinctFrom: Boolean
+  rangeAdjacent: Boolean
+  rangeContains: String
+  rangeOverlaps: Boolean
+}
+
+input TvdbArtworkFilterThumbnailUrl {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbArtworkFilterImageUrl {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbArtworkFilterLanguage {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbArtworkFilterArtworkType {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbArtworkFilterId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int!]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbArtworkFilterInput {
+  and: [TvdbArtworkFilterInput!]
+  or: [TvdbArtworkFilterInput!]
+  not: [TvdbArtworkFilterInput!]
+  id: TvdbArtworkFilterId
+  artworkType: TvdbArtworkFilterArtworkType
+  language: TvdbArtworkFilterLanguage
+  imageUrl: TvdbArtworkFilterImageUrl
+  thumbnailUrl: TvdbArtworkFilterThumbnailUrl
+  includesText: TvdbArtworkFilterIncludesText
+  score: TvdbArtworkFilterScore
+  width: TvdbArtworkFilterWidth
+  height: TvdbArtworkFilterHeight
+  seriesId: TvdbArtworkFilterSeriesId
+  series: TvdbSeriesFilterInput
+}
+
+input TvdbArtworkSortInput {
+  order: SortOrder
+  field: TvdbArtworkSortField!
+}
+
+type TvdbArtwork {
+  id: ID!
+  artworkType: Int
+  language: String
+  imageUrl: String!
+  thumbnailUrl: String
+  includesText: Boolean
+  score: Float
+  width: Int
+  height: Int
+  seriesId: Int!
+  series: TvdbSeries!
+}
+
+enum TvdbSeasonSortField {
+  ID
+  NUMBER
+  NAME
+  IMAGE_URL
+  OVERVIEW
+  TYPE_ID
+  TYPE_NAME
+  SERIES_ID
+}
+
+"A keyset page of :tvdb_season"
+type KeysetPageOfTvdbSeason {
+  "Total count on all pages"
+  count: Int
+
+  "The records contained in the page"
+  results: [TvdbSeason!]
+
+  "The first keyset in the results"
+  startKeyset: String
+
+  "The last keyset in the results"
+  endKeyset: String
+}
+
+input TvdbSeasonFilterSeriesId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int!]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbSeasonFilterTypeName {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeasonFilterTypeId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbSeasonFilterOverview {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeasonFilterImageUrl {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeasonFilterName {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeasonFilterNumber {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbSeasonFilterId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int!]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbSeasonFilterInput {
+  and: [TvdbSeasonFilterInput!]
+  or: [TvdbSeasonFilterInput!]
+  not: [TvdbSeasonFilterInput!]
+  id: TvdbSeasonFilterId
+  number: TvdbSeasonFilterNumber
+  name: TvdbSeasonFilterName
+  imageUrl: TvdbSeasonFilterImageUrl
+  overview: TvdbSeasonFilterOverview
+  typeId: TvdbSeasonFilterTypeId
+  typeName: TvdbSeasonFilterTypeName
+  seriesId: TvdbSeasonFilterSeriesId
+  series: TvdbSeriesFilterInput
+}
+
+input TvdbSeasonSortInput {
+  order: SortOrder
+  field: TvdbSeasonSortField!
+}
+
+type TvdbSeason {
+  id: ID!
+  number: Int
+  name: String
+  imageUrl: String
+  overview: String
+  typeId: Int
+  typeName: String
+  seriesId: Int!
+  series: TvdbSeries!
+}
+
+enum TvdbSeriesSortField {
+  ID
+  NAME
+  SLUG
+  OVERVIEW
+  IMAGE_URL
+  FIRST_AIRED
+  LAST_AIRED
+  NEXT_AIRED
+  YEAR
+  STATUS_ID
+  STATUS_NAME
+  ORIGINAL_COUNTRY
+  ORIGINAL_LANGUAGE
+  AVERAGE_RUNTIME
+  SCORE
+  FETCHED_AT
+}
+
+"A keyset page of :tvdb_series"
+type KeysetPageOfTvdbSeries {
+  "Total count on all pages"
+  count: Int
+
+  "The records contained in the page"
+  results: [TvdbSeries!]
+
+  "The first keyset in the results"
+  startKeyset: String
+
+  "The last keyset in the results"
+  endKeyset: String
+}
+
+input TvdbSeriesFilterFetchedAt {
+  isNil: Boolean
+  eq: DateTime
+  notEq: DateTime
+  in: [DateTime!]
+  lessThan: DateTime
+  greaterThan: DateTime
+  lessThanOrEqual: DateTime
+  greaterThanOrEqual: DateTime
+  isDistinctFrom: DateTime
+  isNotDistinctFrom: DateTime
+  rangeAdjacent: DateTime
+  rangeContains: String
+  rangeOverlaps: DateTime
+}
+
+input TvdbSeriesFilterScore {
+  isNil: Boolean
+  eq: Float
+  notEq: Float
+  in: [Float]
+  lessThan: Float
+  greaterThan: Float
+  lessThanOrEqual: Float
+  greaterThanOrEqual: Float
+  isDistinctFrom: Float
+  isNotDistinctFrom: Float
+  rangeAdjacent: Float
+  rangeContains: String
+  rangeOverlaps: Float
+}
+
+input TvdbSeriesFilterAverageRuntime {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbSeriesFilterOriginalLanguage {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeriesFilterOriginalCountry {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeriesFilterStatusName {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeriesFilterStatusId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbSeriesFilterYear {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeriesFilterNextAired {
+  isNil: Boolean
+  eq: Date
+  notEq: Date
+  in: [Date]
+  lessThan: Date
+  greaterThan: Date
+  lessThanOrEqual: Date
+  greaterThanOrEqual: Date
+  isDistinctFrom: Date
+  isNotDistinctFrom: Date
+  rangeAdjacent: Date
+  rangeContains: String
+  rangeOverlaps: Date
+}
+
+input TvdbSeriesFilterLastAired {
+  isNil: Boolean
+  eq: Date
+  notEq: Date
+  in: [Date]
+  lessThan: Date
+  greaterThan: Date
+  lessThanOrEqual: Date
+  greaterThanOrEqual: Date
+  isDistinctFrom: Date
+  isNotDistinctFrom: Date
+  rangeAdjacent: Date
+  rangeContains: String
+  rangeOverlaps: Date
+}
+
+input TvdbSeriesFilterFirstAired {
+  isNil: Boolean
+  eq: Date
+  notEq: Date
+  in: [Date]
+  lessThan: Date
+  greaterThan: Date
+  lessThanOrEqual: Date
+  greaterThanOrEqual: Date
+  isDistinctFrom: Date
+  isNotDistinctFrom: Date
+  rangeAdjacent: Date
+  rangeContains: String
+  rangeOverlaps: Date
+}
+
+input TvdbSeriesFilterImageUrl {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeriesFilterOverview {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeriesFilterSlug {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeriesFilterName {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbSeriesFilterId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int!]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbSeriesFilterInput {
+  and: [TvdbSeriesFilterInput!]
+  or: [TvdbSeriesFilterInput!]
+  not: [TvdbSeriesFilterInput!]
+  id: TvdbSeriesFilterId
+  name: TvdbSeriesFilterName
+  slug: TvdbSeriesFilterSlug
+  overview: TvdbSeriesFilterOverview
+  imageUrl: TvdbSeriesFilterImageUrl
+  firstAired: TvdbSeriesFilterFirstAired
+  lastAired: TvdbSeriesFilterLastAired
+  nextAired: TvdbSeriesFilterNextAired
+  year: TvdbSeriesFilterYear
+  statusId: TvdbSeriesFilterStatusId
+  statusName: TvdbSeriesFilterStatusName
+  originalCountry: TvdbSeriesFilterOriginalCountry
+  originalLanguage: TvdbSeriesFilterOriginalLanguage
+  averageRuntime: TvdbSeriesFilterAverageRuntime
+  score: TvdbSeriesFilterScore
+  fetchedAt: TvdbSeriesFilterFetchedAt
+  seasons: TvdbSeasonFilterInput
+  artworks: TvdbArtworkFilterInput
+  mapping: MappingFilterInput
+}
+
+input TvdbSeriesSortInput {
+  order: SortOrder
+  field: TvdbSeriesSortField!
+}
+
+type TvdbSeries {
+  id: ID!
+  name: String!
+  slug: String
+  overview: String
+  imageUrl: String
+  firstAired: Date
+  lastAired: Date
+  nextAired: Date
+  year: String
+  statusId: Int
+  statusName: String
+  originalCountry: String
+  originalLanguage: String
+  averageRuntime: Int
+  score: Float
+  fetchedAt: DateTime!
+  seasons(
+    "How to sort the records in the response"
+    sort: [TvdbSeasonSortInput]
+
+    "A filter to limit the results"
+    filter: TvdbSeasonFilterInput
+
+    "The number of records to return."
+    limit: Int
+
+    "The number of records to skip."
+    offset: Int
+  ): [TvdbSeason!]!
+  artworks(
+    "How to sort the records in the response"
+    sort: [TvdbArtworkSortInput]
+
+    "A filter to limit the results"
+    filter: TvdbArtworkFilterInput
+
+    "The number of records to return."
+    limit: Int
+
+    "The number of records to skip."
+    offset: Int
+  ): [TvdbArtwork!]!
+  mapping: Mapping
 }
 
 type RootQueryType {
+  tvdbSeries(
+    "The id of the record"
+    id: ID!
+  ): TvdbSeries
+  tvdbSeriesList(
+    "How to sort the records in the response"
+    sort: [TvdbSeriesSortInput]
+
+    "A filter to limit the results"
+    filter: TvdbSeriesFilterInput
+
+    "The number of records to return from the beginning. Maximum 250"
+    first: Int
+
+    "Show records before the specified keyset."
+    before: String
+
+    "Show records after the specified keyset."
+    after: String
+
+    "The number of records to return to the end. Maximum 250"
+    last: Int
+  ): KeysetPageOfTvdbSeries
+  tvdbSeasons(
+    "How to sort the records in the response"
+    sort: [TvdbSeasonSortInput]
+
+    "A filter to limit the results"
+    filter: TvdbSeasonFilterInput
+
+    "The number of records to return from the beginning. Maximum 250"
+    first: Int
+
+    "Show records before the specified keyset."
+    before: String
+
+    "Show records after the specified keyset."
+    after: String
+
+    "The number of records to return to the end. Maximum 250"
+    last: Int
+  ): KeysetPageOfTvdbSeason
+  tvdbArtworks(
+    "How to sort the records in the response"
+    sort: [TvdbArtworkSortInput]
+
+    "A filter to limit the results"
+    filter: TvdbArtworkFilterInput
+
+    "The number of records to return from the beginning. Maximum 250"
+    first: Int
+
+    "Show records before the specified keyset."
+    before: String
+
+    "Show records after the specified keyset."
+    after: String
+
+    "The number of records to return to the end. Maximum 250"
+    last: Int
+  ): KeysetPageOfTvdbArtwork
   show(
     "The id of the record"
     id: ID!
@@ -850,6 +2038,29 @@ type RootQueryType {
     "The number of records to return to the end. Maximum 250"
     last: Int
   ): KeysetPageOfScheduleEntry
+  mapping(
+    "The id of the record"
+    id: ID!
+  ): Mapping
+  mappings(
+    "How to sort the records in the response"
+    sort: [MappingSortInput]
+
+    "A filter to limit the results"
+    filter: MappingFilterInput
+
+    "The number of records to return from the beginning. Maximum 250"
+    first: Int
+
+    "Show records before the specified keyset."
+    before: String
+
+    "Show records after the specified keyset."
+    after: String
+
+    "The number of records to return to the end. Maximum 250"
+    last: Int
+  ): KeysetPageOfMapping
 }
 
 """
