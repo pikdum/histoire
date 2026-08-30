@@ -1,0 +1,104 @@
+defmodule AnimeData.SubsPlease.Importer do
+  @moduledoc false
+
+  alias AnimeData.Catalog.Mapping
+  alias AnimeData.SubsPlease.{DateParser, Download, Parser, Release, ScheduleEntry, Show}
+
+  def show(attributes) do
+    with {:ok, show} <- Show.upsert(attributes),
+         {:ok, _mapping} <- Mapping.upsert_subsplease(%{subsplease_id: show.id}) do
+      {:ok, show}
+    end
+  end
+
+  def releases(show_id, releases) do
+    Enum.reduce_while(releases, {:ok, 0}, fn release, {:ok, count} ->
+      case release(show_id, release) do
+        {:ok, _release} -> {:cont, {:ok, count + 1}}
+        {:error, error} -> {:halt, {:error, error}}
+      end
+    end)
+  end
+
+  def schedule(entries) do
+    shows_by_slug = Show.list!() |> Map.new(&{&1.slug, &1})
+    observed_at = DateTime.utc_now()
+    current_keys = MapSet.new(entries, &{Parser.slug_from_page(&1["page"]), &1["weekday"]})
+
+    with {:ok, count} <-
+           Enum.reduce_while(entries, {:ok, 0}, fn entry, {:ok, count} ->
+             slug = Parser.slug_from_page(entry["page"])
+             show_id = if show = Map.get(shows_by_slug, slug), do: show.id
+
+             with {:ok, scheduled_time} <- DateParser.scheduled_time(entry["time"]),
+                  {:ok, _schedule_entry} <-
+                    ScheduleEntry.upsert(%{
+                      show_id: show_id,
+                      slug: slug,
+                      title: entry["title"],
+                      weekday: entry["weekday"],
+                      scheduled_time: scheduled_time,
+                      image_url: Parser.absolute_url(entry["image_url"]),
+                      aired: entry["aired"] in [true, 1, "1"],
+                      observed_at: observed_at,
+                      raw: entry
+                    }) do
+               {:cont, {:ok, count + 1}}
+             else
+               {:error, error} -> {:halt, {:error, error}}
+             end
+           end) do
+      ScheduleEntry.list!()
+      |> Enum.reject(&MapSet.member?(current_keys, {&1.slug, &1.weekday}))
+      |> Enum.each(&ScheduleEntry.destroy!/1)
+
+      {:ok, count}
+    end
+  end
+
+  defp release(show_id, %{kind: kind, name: name, raw: row}) do
+    with {:ok, source_date} <- DateParser.source_date(row["time"]),
+         {:ok, released_at} <- DateParser.released_at(row["release_date"]),
+         {:ok, release} <-
+           Release.upsert(%{
+             show_id: show_id,
+             kind: kind,
+             name: name,
+             episode: to_string(row["episode"]),
+             source_date: source_date,
+             released_at: released_at,
+             raw_time: row["time"],
+             raw: row
+           }),
+         :ok <- downloads(release.id, row["downloads"] || []) do
+      {:ok, release}
+    end
+  end
+
+  defp downloads(release_id, downloads) do
+    with :ok <-
+           Enum.reduce_while(downloads, :ok, fn download, :ok ->
+             attributes = %{
+               release_id: release_id,
+               resolution: to_string(download["res"]),
+               torrent_url: download["torrent"],
+               magnet_uri: download["magnet"],
+               xdcc: download["xdcc"],
+               raw: download
+             }
+
+             case Download.upsert(attributes) do
+               {:ok, _download} -> {:cont, :ok}
+               {:error, error} -> {:halt, {:error, error}}
+             end
+           end) do
+      current_resolutions = MapSet.new(downloads, &to_string(&1["res"]))
+
+      Release.get_by_id!(release_id, load: [:downloads]).downloads
+      |> Enum.reject(&MapSet.member?(current_resolutions, &1.resolution))
+      |> Enum.each(&Download.destroy!/1)
+
+      :ok
+    end
+  end
+end

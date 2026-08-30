@@ -1,0 +1,873 @@
+schema {
+  query: RootQueryType
+}
+
+enum ScheduleEntrySortField {
+  ID
+  SLUG
+  TITLE
+  WEEKDAY
+  SCHEDULED_TIME
+  IMAGE_URL
+  AIRED
+  OBSERVED_AT
+  SHOW_ID
+}
+
+"A keyset page of :schedule_entry"
+type KeysetPageOfScheduleEntry {
+  "Total count on all pages"
+  count: Int
+
+  "The records contained in the page"
+  results: [ScheduleEntry!]
+
+  "The first keyset in the results"
+  startKeyset: String
+
+  "The last keyset in the results"
+  endKeyset: String
+}
+
+input ScheduleEntryFilterShowId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input ScheduleEntryFilterObservedAt {
+  isNil: Boolean
+  eq: DateTime
+  notEq: DateTime
+  in: [DateTime!]
+  lessThan: DateTime
+  greaterThan: DateTime
+  lessThanOrEqual: DateTime
+  greaterThanOrEqual: DateTime
+  isDistinctFrom: DateTime
+  isNotDistinctFrom: DateTime
+  rangeAdjacent: DateTime
+  rangeContains: String
+  rangeOverlaps: DateTime
+}
+
+input ScheduleEntryFilterAired {
+  isNil: Boolean
+  eq: Boolean
+  notEq: Boolean
+  in: [Boolean!]
+  lessThan: Boolean
+  greaterThan: Boolean
+  lessThanOrEqual: Boolean
+  greaterThanOrEqual: Boolean
+  isDistinctFrom: Boolean
+  isNotDistinctFrom: Boolean
+  rangeAdjacent: Boolean
+  rangeContains: String
+  rangeOverlaps: Boolean
+}
+
+input ScheduleEntryFilterImageUrl {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ScheduleEntryFilterScheduledTime {
+  isNil: Boolean
+  eq: Time
+  notEq: Time
+  in: [Time!]
+  lessThan: Time
+  greaterThan: Time
+  lessThanOrEqual: Time
+  greaterThanOrEqual: Time
+  isDistinctFrom: Time
+  isNotDistinctFrom: Time
+  rangeAdjacent: Time
+  rangeContains: String
+  rangeOverlaps: Time
+}
+
+input ScheduleEntryFilterWeekday {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ScheduleEntryFilterTitle {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ScheduleEntryFilterSlug {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ScheduleEntryFilterId {
+  isNil: Boolean
+  eq: ID
+  notEq: ID
+  in: [ID!]
+  lessThan: ID
+  greaterThan: ID
+  lessThanOrEqual: ID
+  greaterThanOrEqual: ID
+  isDistinctFrom: ID
+  isNotDistinctFrom: ID
+  rangeAdjacent: ID
+  rangeContains: String
+  rangeOverlaps: ID
+}
+
+input ScheduleEntryFilterInput {
+  and: [ScheduleEntryFilterInput!]
+  or: [ScheduleEntryFilterInput!]
+  not: [ScheduleEntryFilterInput!]
+  id: ScheduleEntryFilterId
+  slug: ScheduleEntryFilterSlug
+  title: ScheduleEntryFilterTitle
+  weekday: ScheduleEntryFilterWeekday
+  scheduledTime: ScheduleEntryFilterScheduledTime
+  imageUrl: ScheduleEntryFilterImageUrl
+  aired: ScheduleEntryFilterAired
+  observedAt: ScheduleEntryFilterObservedAt
+  showId: ScheduleEntryFilterShowId
+  show: ShowFilterInput
+}
+
+input ScheduleEntrySortInput {
+  order: SortOrder
+  field: ScheduleEntrySortField!
+}
+
+type ScheduleEntry {
+  id: ID!
+  slug: String!
+  title: String!
+  weekday: String!
+  scheduledTime: Time!
+  imageUrl: String
+  aired: Boolean!
+  observedAt: DateTime!
+  showId: Int
+  show: Show
+}
+
+enum DownloadSortField {
+  ID
+  RESOLUTION
+  TORRENT_URL
+  MAGNET_URI
+  XDCC
+  RELEASE_ID
+}
+
+input DownloadFilterReleaseId {
+  isNil: Boolean
+  eq: ID
+  notEq: ID
+  in: [ID!]
+  lessThan: ID
+  greaterThan: ID
+  lessThanOrEqual: ID
+  greaterThanOrEqual: ID
+  isDistinctFrom: ID
+  isNotDistinctFrom: ID
+  rangeAdjacent: ID
+  rangeContains: String
+  rangeOverlaps: ID
+}
+
+input DownloadFilterXdcc {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input DownloadFilterMagnetUri {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input DownloadFilterTorrentUrl {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input DownloadFilterResolution {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input DownloadFilterId {
+  isNil: Boolean
+  eq: ID
+  notEq: ID
+  in: [ID!]
+  lessThan: ID
+  greaterThan: ID
+  lessThanOrEqual: ID
+  greaterThanOrEqual: ID
+  isDistinctFrom: ID
+  isNotDistinctFrom: ID
+  rangeAdjacent: ID
+  rangeContains: String
+  rangeOverlaps: ID
+}
+
+input DownloadFilterInput {
+  and: [DownloadFilterInput!]
+  or: [DownloadFilterInput!]
+  not: [DownloadFilterInput!]
+  id: DownloadFilterId
+  resolution: DownloadFilterResolution
+  torrentUrl: DownloadFilterTorrentUrl
+  magnetUri: DownloadFilterMagnetUri
+  xdcc: DownloadFilterXdcc
+  releaseId: DownloadFilterReleaseId
+  release: ReleaseFilterInput
+}
+
+input DownloadSortInput {
+  order: SortOrder
+  field: DownloadSortField!
+}
+
+type Download {
+  id: ID!
+  resolution: String!
+  torrentUrl: String
+  magnetUri: String
+  xdcc: String
+  releaseId: ID!
+  release: Release!
+}
+
+enum ReleaseSortField {
+  ID
+  KIND
+  NAME
+  EPISODE
+  SOURCE_DATE
+  RELEASED_AT
+  RAW_TIME
+  SHOW_ID
+}
+
+"A keyset page of :release"
+type KeysetPageOfRelease {
+  "Total count on all pages"
+  count: Int
+
+  "The records contained in the page"
+  results: [Release!]
+
+  "The first keyset in the results"
+  startKeyset: String
+
+  "The last keyset in the results"
+  endKeyset: String
+}
+
+input ReleaseFilterShowId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int!]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input ReleaseFilterRawTime {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ReleaseFilterReleasedAt {
+  isNil: Boolean
+  eq: DateTime
+  notEq: DateTime
+  in: [DateTime]
+  lessThan: DateTime
+  greaterThan: DateTime
+  lessThanOrEqual: DateTime
+  greaterThanOrEqual: DateTime
+  isDistinctFrom: DateTime
+  isNotDistinctFrom: DateTime
+  rangeAdjacent: DateTime
+  rangeContains: String
+  rangeOverlaps: DateTime
+}
+
+input ReleaseFilterSourceDate {
+  isNil: Boolean
+  eq: Date
+  notEq: Date
+  in: [Date]
+  lessThan: Date
+  greaterThan: Date
+  lessThanOrEqual: Date
+  greaterThanOrEqual: Date
+  isDistinctFrom: Date
+  isNotDistinctFrom: Date
+  rangeAdjacent: Date
+  rangeContains: String
+  rangeOverlaps: Date
+}
+
+input ReleaseFilterEpisode {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ReleaseFilterName {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ReleaseFilterKind {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+}
+
+input ReleaseFilterId {
+  isNil: Boolean
+  eq: ID
+  notEq: ID
+  in: [ID!]
+  lessThan: ID
+  greaterThan: ID
+  lessThanOrEqual: ID
+  greaterThanOrEqual: ID
+  isDistinctFrom: ID
+  isNotDistinctFrom: ID
+  rangeAdjacent: ID
+  rangeContains: String
+  rangeOverlaps: ID
+}
+
+input ReleaseFilterInput {
+  and: [ReleaseFilterInput!]
+  or: [ReleaseFilterInput!]
+  not: [ReleaseFilterInput!]
+  id: ReleaseFilterId
+  kind: ReleaseFilterKind
+  name: ReleaseFilterName
+  episode: ReleaseFilterEpisode
+  sourceDate: ReleaseFilterSourceDate
+  releasedAt: ReleaseFilterReleasedAt
+  rawTime: ReleaseFilterRawTime
+  showId: ReleaseFilterShowId
+  show: ShowFilterInput
+  downloads: DownloadFilterInput
+}
+
+input ReleaseSortInput {
+  order: SortOrder
+  field: ReleaseSortField!
+}
+
+type Release {
+  id: ID!
+  kind: String!
+  name: String!
+  episode: String!
+  sourceDate: Date
+  releasedAt: DateTime
+  rawTime: String
+  showId: Int!
+  show: Show!
+  downloads(
+    "How to sort the records in the response"
+    sort: [DownloadSortInput]
+
+    "A filter to limit the results"
+    filter: DownloadFilterInput
+
+    "The number of records to return."
+    limit: Int
+
+    "The number of records to skip."
+    offset: Int
+  ): [Download!]!
+}
+
+enum ShowSortField {
+  ID
+  SLUG
+  NAME
+  SYNOPSIS
+  IMAGE_URL
+  FETCHED_AT
+}
+
+"A keyset page of :show"
+type KeysetPageOfShow {
+  "Total count on all pages"
+  count: Int
+
+  "The records contained in the page"
+  results: [Show!]
+
+  "The first keyset in the results"
+  startKeyset: String
+
+  "The last keyset in the results"
+  endKeyset: String
+}
+
+input ShowFilterFetchedAt {
+  isNil: Boolean
+  eq: DateTime
+  notEq: DateTime
+  in: [DateTime!]
+  lessThan: DateTime
+  greaterThan: DateTime
+  lessThanOrEqual: DateTime
+  greaterThanOrEqual: DateTime
+  isDistinctFrom: DateTime
+  isNotDistinctFrom: DateTime
+  rangeAdjacent: DateTime
+  rangeContains: String
+  rangeOverlaps: DateTime
+}
+
+input ShowFilterImageUrl {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ShowFilterSynopsis {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ShowFilterName {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ShowFilterSlug {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input ShowFilterId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int!]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input ShowFilterInput {
+  and: [ShowFilterInput!]
+  or: [ShowFilterInput!]
+  not: [ShowFilterInput!]
+  id: ShowFilterId
+  slug: ShowFilterSlug
+  name: ShowFilterName
+  synopsis: ShowFilterSynopsis
+  imageUrl: ShowFilterImageUrl
+  fetchedAt: ShowFilterFetchedAt
+  releases: ReleaseFilterInput
+}
+
+input ShowSortInput {
+  order: SortOrder
+  field: ShowSortField!
+}
+
+type Show {
+  id: ID!
+  slug: String!
+  name: String!
+  synopsis: String
+  imageUrl: String
+  fetchedAt: DateTime!
+  releases(
+    "How to sort the records in the response"
+    sort: [ReleaseSortInput]
+
+    "A filter to limit the results"
+    filter: ReleaseFilterInput
+
+    "The number of records to return."
+    limit: Int
+
+    "The number of records to skip."
+    offset: Int
+  ): [Release!]!
+}
+
+enum SortOrder {
+  DESC
+  DESC_NULLS_FIRST
+  DESC_NULLS_LAST
+  ASC
+  ASC_NULLS_FIRST
+  ASC_NULLS_LAST
+}
+
+type RootQueryType {
+  show(
+    "The id of the record"
+    id: ID!
+  ): Show
+  shows(
+    "How to sort the records in the response"
+    sort: [ShowSortInput]
+
+    "A filter to limit the results"
+    filter: ShowFilterInput
+
+    "The number of records to return from the beginning. Maximum 250"
+    first: Int
+
+    "Show records before the specified keyset."
+    before: String
+
+    "Show records after the specified keyset."
+    after: String
+
+    "The number of records to return to the end. Maximum 250"
+    last: Int
+  ): KeysetPageOfShow
+  release(
+    "The id of the record"
+    id: ID!
+  ): Release
+  releases(
+    "How to sort the records in the response"
+    sort: [ReleaseSortInput]
+
+    "A filter to limit the results"
+    filter: ReleaseFilterInput
+
+    "The number of records to return from the beginning. Maximum 250"
+    first: Int
+
+    "Show records before the specified keyset."
+    before: String
+
+    "Show records after the specified keyset."
+    after: String
+
+    "The number of records to return to the end. Maximum 250"
+    last: Int
+  ): KeysetPageOfRelease
+  scheduleEntries(
+    "How to sort the records in the response"
+    sort: [ScheduleEntrySortInput]
+
+    "A filter to limit the results"
+    filter: ScheduleEntryFilterInput
+
+    "The number of records to return from the beginning. Maximum 250"
+    first: Int
+
+    "Show records before the specified keyset."
+    before: String
+
+    "Show records after the specified keyset."
+    after: String
+
+    "The number of records to return to the end. Maximum 250"
+    last: Int
+  ): KeysetPageOfScheduleEntry
+}
+
+"""
+The `DateTime` scalar type represents a date and time in the UTC
+timezone. The DateTime appears in a JSON response as an ISO8601 formatted
+string, including UTC timezone ("Z"). The parsed date and time string will
+be converted to UTC if there is an offset.
+"""
+scalar DateTime
+
+"""
+The `Date` scalar type represents a date. The Date appears in a JSON
+response as an ISO8601 formatted string, without a time component.
+"""
+scalar Date
+
+"""
+The `Time` scalar type represents a time. The Time appears in a JSON
+response as an ISO8601 formatted string, without a date component.
+"""
+scalar Time
