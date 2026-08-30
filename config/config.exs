@@ -110,6 +110,7 @@ config :anime_data, AnimeData.Mailer, adapter: Swoosh.Adapters.Local
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.25.4",
+  path: System.get_env("MIX_ESBUILD_PATH"),
   anime_data: [
     args:
       ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
@@ -120,6 +121,7 @@ config :esbuild,
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "4.3.0",
+  path: System.get_env("MIX_TAILWIND_PATH"),
   anime_data: [
     args: ~w(
       --input=assets/css/app.css

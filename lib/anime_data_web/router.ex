@@ -2,6 +2,7 @@ defmodule AnimeDataWeb.Router do
   use AnimeDataWeb, :router
 
   import Oban.Web.Router
+  import AshAdmin.Router
 
   pipeline :graphql do
     plug AshGraphql.Plug
@@ -20,6 +21,10 @@ defmodule AnimeDataWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :admin_auth do
+    plug AnimeDataWeb.Plugs.AdminAuth
+  end
+
   scope "/gql" do
     pipe_through [:graphql]
 
@@ -35,6 +40,24 @@ defmodule AnimeDataWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+  end
+
+  scope "/", AnimeDataWeb do
+    pipe_through :api
+
+    get "/health", HealthController, :index
+  end
+
+  scope "/" do
+    pipe_through [:browser, :admin_auth]
+
+    oban_dashboard("/oban")
+  end
+
+  scope "/admin" do
+    pipe_through [:browser, :admin_auth]
+
+    ash_admin "/"
   end
 
   # Other scopes may use custom stacks.
@@ -56,22 +79,6 @@ defmodule AnimeDataWeb.Router do
 
       live_dashboard "/dashboard", metrics: AnimeDataWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
-    end
-
-    scope "/" do
-      pipe_through :browser
-
-      oban_dashboard("/oban")
-    end
-  end
-
-  if Application.compile_env(:anime_data, :dev_routes) do
-    import AshAdmin.Router
-
-    scope "/admin" do
-      pipe_through :browser
-
-      ash_admin "/"
     end
   end
 end

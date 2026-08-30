@@ -13,6 +13,7 @@ defmodule AnimeData.MixProject do
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
       listeners: [Phoenix.CodeReloader],
       consolidate_protocols: Mix.env() != :dev,
+      releases: [anime_data: [include_executables_for: [:unix]]],
       usage_rules: usage_rules()
     ]
   end

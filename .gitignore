@@ -24,6 +24,7 @@ erl_crash.dump
 *.ez
 /tmp/
 anime_data-*.tar
+/result
 
 # Generated frontend assets
 /priv/static/assets/

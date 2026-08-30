@@ -1,68 +1,63 @@
-# Anime Data
+# anime-data
 
-Anime Data is a local metadata mirror for Haru. It keeps source-owned data in
-separate PostgreSQL schemas and exposes the resulting model through Ash,
-GraphQL, AshAdmin, and Oban Web.
+`anime-data` mirrors anime metadata into PostgreSQL so clients can query one local API instead of repeatedly hitting upstream sites. Source schemas remain source-shaped; `public` holds reconciliation data that does not belong to one upstream.
 
-The first vertical slice mirrors SubsPlease:
+## Data flow
 
-| Table | Purpose |
-| --- | --- |
-| `subsplease.shows` | Upstream show ID, slug, title, synopsis, image, and fetch metadata |
-| `subsplease.releases` | Episodes and batches, distinguished by `kind` |
-| `subsplease.downloads` | Resolution-specific torrent, magnet, and XDCC links |
-| `subsplease.schedule_entries` | The current weekly schedule |
-| `public.mappings` | Cross-source IDs; every imported SubsPlease show gets a row |
+1. SubsPlease discovery imports `subsplease.shows`, releases, downloads, and schedule entries.
+2. A low-concurrency LLM worker researches unmatched shows through read-only TVDB search/detail tools.
+3. Confident results update `public.mappings`; ambiguous results remain `needs_review` for AshAdmin.
+4. Accepted TVDB IDs trigger a mirror refresh into `tvdb.series`, seasons, and artworks.
+
+The hot SubsPlease latest poll runs every 30 minutes, schedule polling every six hours, and full discovery daily. Source-wide rate limiters and single-worker Oban queues bound request pressure. TVDB refreshes run daily.
 
 ## Development
 
-The devenv PostgreSQL service provides `anime_data_dev`.
+The devenv provides Elixir 1.20, Erlang/OTP 29, and PostgreSQL 18.
 
 ```sh
+cp .env.example .env
 mix setup
 mix phx.server
 ```
 
-If the current shell predates a `devenv.nix` change, prefix commands with
-`devenv shell --`.
+Useful endpoints:
 
-Development interfaces:
+- GraphQL: `http://localhost:4000/gql`
+- GraphiQL: `http://localhost:4000/gql/playground`
+- AshAdmin: `http://localhost:4000/admin`
+- Oban Web: `http://localhost:4000/oban`
+- health: `http://localhost:4000/health`
 
-- GraphQL: <http://localhost:4000/gql/>
-- GraphQL playground: <http://localhost:4000/gql/playground>
-- AshAdmin: <http://localhost:4000/admin>
-- Oban Web: <http://localhost:4000/oban>
+Run an initial discovery or matching pass from IEx:
 
-The GraphQL schema is also checked in as `schema.graphql`.
-
-## Synchronization
-
-All source calls share a conservative one-request-per-minute gate. The
-`subsplease` Oban queue has concurrency one as a second guard. Bulk jobs use
-priority 3; latest and schedule polling use priority 0, and can promote a
-matching bulk job that is already scheduled.
-
-| Flow | Schedule | Behavior |
-| --- | --- | --- |
-| Discovery | Daily at 04:00 UTC | Reads `/shows/` and spaces show/release jobs one minute apart |
-| Latest | Every 30 minutes | Promotes jobs for the slugs returned by `f=latest` |
-| Schedule | Every 6 hours at minute 15 | Mirrors the UTC weekly schedule and queues known shows for five minutes after airtime |
-
-The actions can also be invoked manually:
-
-```sh
-mix run -e 'AnimeData.SubsPlease.Sync.discover!()'
-mix run -e 'AnimeData.SubsPlease.Sync.latest!()'
-mix run -e 'AnimeData.SubsPlease.Sync.schedule!()'
+```elixir
+AnimeData.SubsPlease.Sync.discover()
+AnimeData.Catalog.MatchSync.enqueue_pending()
 ```
 
-Run `mix precommit` before committing. Ash resource changes should be followed
-by `mix ash.codegen descriptive_migration_name`, migration review, and
-`mix ash.migrate`.
+`ANIME_DATA_MATCHING_MODEL` accepts any ReqLLM model specification. The default is `openai_codex:gpt-5.6-luna`. Development can read a native Codex `auth.json` through `CODEX_AUTH_FILE`. For deployment, use `REQ_LLM_OAUTH_FILE` pointing at a writable secret/state file with an `openai-codex` entry; ReqLLM may refresh it in place, so do not put it in the immutable Nix store.
 
-## Next source
+## Nix release
 
-TVDB is intentionally the next slice. `public.mappings.tvdb_id` is nullable so
-an Ash AI/Jido action can perform LLM-first matching from the richer
-SubsPlease record before TVDB data is fetched into its own schema. No title
-scoring heuristic is part of the current implementation.
+Build the self-contained OTP release for the current system:
+
+```sh
+nix build .#anime_data
+```
+
+Production configuration:
+
+- `PHX_SERVER=true`, `PHX_HOST`, `PORT`, and `SECRET_KEY_BASE`
+- either `DATABASE_URL`, or `DATABASE_SOCKET_DIR` plus optional `DATABASE_NAME`/`DATABASE_USER`
+- `TVDB_API_KEY`
+- `ANIME_DATA_MATCHING_MODEL` and its provider credentials
+- `ADMIN_USERNAME` and `ADMIN_PASSWORD` to expose `/admin` and `/oban`
+
+Run migrations before starting a new release:
+
+```sh
+bin/anime_data eval "AnimeData.Release.migrate()"
+```
+
+The flake exposes both `packages.<system>.default` and `packages.<system>.anime_data`, ready to consume as a flake input from the NixOS configuration.
