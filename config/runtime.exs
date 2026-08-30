@@ -2,6 +2,18 @@ import Config
 
 config :anime_data, :tvdb_api_key, System.get_env("TVDB_API_KEY")
 
+config :anime_data,
+       :matching_model,
+       System.get_env("ANIME_DATA_MATCHING_MODEL", "openai_codex:gpt-5.6-luna")
+
+config :anime_data,
+       :codex_auth_file,
+       System.get_env("CODEX_AUTH_FILE", Path.expand("~/.codex/auth.json"))
+
+if oauth_file = System.get_env("REQ_LLM_OAUTH_FILE") || System.get_env("REQ_LLM_AUTH_FILE") do
+  config :req_llm, :oauth_file, oauth_file
+end
+
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
 # system starts, so it is typically used to load production configuration

@@ -3,5 +3,7 @@ defmodule AnimeData.Catalog do
 
   resources do
     resource AnimeData.Catalog.Mapping
+    resource AnimeData.Catalog.Matcher
+    resource AnimeData.Catalog.MatchSync
   end
 end
