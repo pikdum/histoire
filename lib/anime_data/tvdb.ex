@@ -14,7 +14,9 @@ defmodule AnimeData.TVDB do
 
   tools do
     tool :search_tvdb_series, AnimeData.TVDB.Lookup, :search_series
+    tool :search_web_for_tvdb_series, AnimeData.TVDB.Lookup, :search_web
     tool :get_tvdb_series, AnimeData.TVDB.Lookup, :get_series
+    tool :get_tvdb_series_by_slug, AnimeData.TVDB.Lookup, :get_series_by_slug
   end
 
   resources do

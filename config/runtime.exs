@@ -1,6 +1,7 @@
 import Config
 
 config :anime_data, :tvdb_api_key, System.get_env("TVDB_API_KEY")
+config :anime_data, :brave_search_api_key, System.get_env("BRAVE_SEARCH_API_KEY")
 
 config :anime_data,
        :matching_model,
