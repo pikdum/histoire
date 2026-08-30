@@ -12,7 +12,7 @@ config :ash_oban, pro?: false
 config :anime_data, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.Postgres,
-  queues: [subsplease: 1, default: 5],
+  queues: [subsplease: 1, tvdb: 1, tvdb_match: 1, default: 5],
   lifeline: [rescue_after: {2, :hours}],
   pruner: [max_age: {1, :day}],
   repo: AnimeData.Repo,
@@ -80,7 +80,7 @@ config :spark,
 config :anime_data,
   ecto_repos: [AnimeData.Repo],
   generators: [timestamp_type: :utc_datetime],
-  ash_domains: [AnimeData.Catalog, AnimeData.SubsPlease]
+  ash_domains: [AnimeData.Catalog, AnimeData.SubsPlease, AnimeData.TVDB]
 
 # Configure the endpoint
 config :anime_data, AnimeDataWeb.Endpoint,

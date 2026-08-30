@@ -11,6 +11,8 @@ defmodule AnimeData.Application do
       AnimeDataWeb.Telemetry,
       AnimeData.Repo,
       AnimeData.SubsPlease.RateLimiter,
+      AnimeData.TVDB.RateLimiter,
+      AnimeData.TVDB.TokenStore,
       {DNSCluster, query: Application.get_env(:anime_data, :dns_cluster_query) || :ignore},
       {Oban,
        AshOban.config(
