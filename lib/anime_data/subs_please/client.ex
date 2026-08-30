@@ -20,7 +20,7 @@ defmodule AnimeData.SubsPlease.Client do
 
   def fetch_releases(show_id) do
     with {:ok, payload} <- get_json("/api/", f: "show", tz: @timezone, sid: show_id) do
-      {:ok, Parser.releases(payload)}
+      Parser.releases(payload)
     end
   end
 

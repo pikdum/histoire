@@ -44,15 +44,14 @@ defmodule AnimeData.SubsPlease.Parser do
     end
   end
 
-  def releases(payload) when is_map(payload) do
-    [:episode, :batch]
-    |> Enum.flat_map(fn kind ->
-      payload
-      |> Map.get(Atom.to_string(kind), %{})
-      |> named_rows()
-      |> Enum.map(fn {name, row} -> %{kind: kind, name: name, raw: row} end)
-    end)
+  def releases(%{"episode" => episodes, "batch" => batches}) do
+    with {:ok, episodes} <- named_collection(episodes),
+         {:ok, batches} <- named_collection(batches) do
+      {:ok, release_rows(:episode, episodes) ++ release_rows(:batch, batches)}
+    end
   end
+
+  def releases(_payload), do: {:error, :invalid_releases_payload}
 
   def latest(payload) when is_map(payload) do
     payload
@@ -99,6 +98,16 @@ defmodule AnimeData.SubsPlease.Parser do
   defp named_rows([]), do: []
   defp named_rows(rows) when is_map(rows), do: Map.to_list(rows)
   defp named_rows(_rows), do: []
+
+  defp named_collection(rows) when is_map(rows), do: {:ok, rows}
+  defp named_collection([]), do: {:ok, []}
+  defp named_collection(_rows), do: {:error, :invalid_releases_payload}
+
+  defp release_rows(kind, rows) do
+    rows
+    |> named_rows()
+    |> Enum.map(fn {name, row} -> %{kind: kind, name: name, raw: row} end)
+  end
 
   defp required_integer_attribute(document, selector, attribute) do
     case optional_attribute(document, selector, attribute) do

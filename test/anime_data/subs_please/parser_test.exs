@@ -41,10 +41,20 @@ defmodule AnimeData.SubsPlease.ParserTest do
       }
     }
 
+    assert {:ok, releases} = Parser.releases(payload)
+
     assert [
              %{kind: :episode, name: "Acro Trip - 12"},
              %{kind: :batch, name: "Acro Trip - 01-12 (Batch)"}
-           ] = Enum.map(Parser.releases(payload), &Map.take(&1, [:kind, :name]))
+           ] = Enum.map(releases, &Map.take(&1, [:kind, :name]))
+  end
+
+  test "distinguishes no releases from an invalid response" do
+    assert {:ok, []} = Parser.releases(%{"episode" => [], "batch" => []})
+    assert {:error, :invalid_releases_payload} = Parser.releases(%{})
+
+    assert {:error, :invalid_releases_payload} =
+             Parser.releases(%{"episode" => nil, "batch" => []})
   end
 
   test "distinguishes an empty schedule from an invalid response" do
