@@ -117,6 +117,34 @@ defmodule AnimeData.MixProject do
   end
 
   defp usage_rules do
-    [file: "AGENTS.md", usage_rules: ["usage_rules:all", :ash, ~r/^ash_/]]
+    [
+      file: "AGENTS.md",
+      usage_rules: [:usage_rules],
+      skills: [
+        location: ".agents/skills",
+        build: [
+          "ash-framework": [
+            description:
+              "Load when editing Ash.Resource or Ash.Domain modules, AshPostgres resources or migrations, or AshOban triggers and scheduled actions. Do not load for Phoenix-only UI work.",
+            usage_rules: [:ash, :ash_postgres, :ash_oban]
+          ],
+          "ash-ai": [
+            description:
+              "Load when editing AshAi tools, prompt actions, structured outputs, or ReqLLM-backed Ash actions.",
+            usage_rules: [:ash_ai]
+          ],
+          "ash-graphql": [
+            description:
+              "Load when editing AshGraphql domain or resource configuration, queries, mutations, subscriptions, custom types, or the generated GraphQL schema.",
+            usage_rules: [:ash_graphql]
+          ],
+          "phoenix-framework": [
+            description:
+              "Load when editing Phoenix routers, controllers, components, LiveViews, templates, or forms, including AshPhoenix.Form. Do not load for domain-only Ash work.",
+            usage_rules: ["phoenix:all", :ash_phoenix]
+          ]
+        ]
+      ]
+    ]
   end
 end
