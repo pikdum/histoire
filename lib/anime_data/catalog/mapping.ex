@@ -13,6 +13,11 @@ defmodule AnimeData.Catalog.Mapping do
     references do
       reference :subsplease_show, ignore?: true
       reference :tvdb_series, ignore?: true
+      reference :tvdb_movie, ignore?: true
+    end
+
+    custom_indexes do
+      index [:tvdb_id]
     end
   end
 
@@ -67,7 +72,8 @@ defmodule AnimeData.Catalog.Mapping do
 
     update :set_tvdb do
       require_atomic? false
-      accept [:tvdb_id]
+      accept [:tvdb_id, :tvdb_type]
+      validate present([:tvdb_id, :tvdb_type])
       change AnimeData.Catalog.Changes.FinalizeMatch
     end
 
@@ -95,7 +101,9 @@ defmodule AnimeData.Catalog.Mapping do
 
       accept [
         :tvdb_id,
+        :tvdb_type,
         :candidate_tvdb_id,
+        :candidate_tvdb_type,
         :status,
         :match_confidence,
         :match_reasoning,
@@ -135,7 +143,17 @@ defmodule AnimeData.Catalog.Mapping do
       public? true
     end
 
+    attribute :tvdb_type, :atom do
+      constraints one_of: [:series, :movie]
+      public? true
+    end
+
     attribute :candidate_tvdb_id, :integer do
+      public? true
+    end
+
+    attribute :candidate_tvdb_type, :atom do
+      constraints one_of: [:series, :movie]
       public? true
     end
 
@@ -164,19 +182,14 @@ defmodule AnimeData.Catalog.Mapping do
       public? true
     end
 
-    attribute :last_attempted_at, :utc_datetime_usec do
-      public? true
-    end
+    attribute :last_attempted_at, :utc_datetime_usec
 
-    attribute :last_error, :string do
-      public? true
-    end
+    attribute :last_error, :string
 
     attribute :attempts, :integer do
       allow_nil? false
       default 0
       constraints min: 0
-      public? true
     end
 
     timestamps()
@@ -194,6 +207,15 @@ defmodule AnimeData.Catalog.Mapping do
       source_attribute :tvdb_id
       destination_attribute :id
       define_attribute? false
+      filter expr(parent(tvdb_type) == :series)
+      public? true
+    end
+
+    belongs_to :tvdb_movie, AnimeData.TVDB.Movie do
+      source_attribute :tvdb_id
+      destination_attribute :id
+      define_attribute? false
+      filter expr(parent(tvdb_type) == :movie)
       public? true
     end
   end

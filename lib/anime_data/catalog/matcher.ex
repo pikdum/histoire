@@ -11,7 +11,7 @@ defmodule AnimeData.Catalog.Matcher do
 
   actions do
     action :match_tvdb, AnimeData.Catalog.MatchDecision do
-      description "Find the TVDB series corresponding to a SubsPlease anime release."
+      description "Find the TVDB title corresponding to a SubsPlease anime release."
 
       argument :name, :string do
         allow_nil? false
@@ -34,9 +34,10 @@ defmodule AnimeData.Catalog.Matcher do
             &AnimeData.AI.Config.model/0,
             prompt: &__MODULE__.prompt/2,
             tools: [
-              :search_tvdb_series,
-              :search_web_for_tvdb_series,
+              :search_tvdb_titles,
+              :search_web_for_tvdb_title,
               :get_tvdb_series,
+              :get_tvdb_movie,
               :get_tvdb_series_by_slug
             ],
             otp_app: :anime_data,
@@ -47,7 +48,6 @@ defmodule AnimeData.Catalog.Matcher do
   end
 
   def configure_flow(flow, _context) do
-    :ok = AnimeData.TVDB.WebSearch.begin_research()
     %{flow | req_llm_opts: AnimeData.AI.Config.req_llm_opts()}
   end
 
@@ -55,15 +55,17 @@ defmodule AnimeData.Catalog.Matcher do
     arguments = input.arguments
 
     system = """
-    You reconcile SubsPlease anime records with TVDB series. Work from evidence, not title similarity alone.
+    You reconcile SubsPlease anime records with TVDB titles. Work from evidence, not title similarity alone.
 
     Always start with TVDB search. Do not use web search before trying TVDB. TVDB search is brittle, so actively vary the query: remove punctuation and spaces, replace typographic punctuation, and try translated, romanized, shortened, and alternate titles. Strip suffixes such as S2, Season 2, or Part 2 and search the base title because TVDB commonly stores all seasons under one series.
 
-    Only if TVDB search remains empty or returns only irrelevant records, make at most one web search for the mapping. Use it to discover alternate titles, official anime information, or a missing thetvdb.com series page. Treat web results only as research leads. Validate a discovered TVDB slug with the TVDB slug detail tool before selecting it; otherwise use the new evidence to retry TVDB search. Then compare synopsis, premiere and ending dates, country, language, aliases, and genre. Never select a movie record.
+    For an anime film, prefer the exact TVDB movie record. If no defensible movie record exists, its TVDB series is an acceptable fallback and is better than no match. For episodic releases, prefer the TVDB series. Never select an unrelated movie just because its title is similar.
+
+    Only if TVDB search remains empty or returns only irrelevant records, make a focused web search. Use it to discover alternate titles, official anime information, or a missing thetvdb.com page. Treat web results only as research leads. Validate a discovered series slug with the TVDB series slug tool. Validate a numeric ID from a /movies/ URL with the TVDB movie detail tool. Otherwise use the new evidence to retry TVDB search. Then compare synopsis, release dates, country, language, aliases, and genre.
 
     Once the evidence is sufficient, stop calling tools and return the structured decision. Do not exhaust the research budget after finding a defensible candidate.
 
-    Return `matched` only when the evidence identifies one TVDB series reliably. Return `needs_review` with the best candidate ID when evidence is plausible but ambiguous. Return `no_match` with a null ID only after reasonable searches find no defensible candidate. Confidence must reflect the evidence, and reasoning must be concise and specific.
+    Return `matched` only when the evidence identifies one TVDB title reliably. Return `needs_review` with the best candidate ID and type when evidence is plausible but ambiguous. Return `no_match` with a null ID and null type only after reasonable searches find no defensible candidate. Confidence must reflect the evidence, and reasoning must be concise and specific.
     """
 
     user = """

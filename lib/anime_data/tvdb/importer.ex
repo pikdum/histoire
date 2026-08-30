@@ -1,7 +1,29 @@
 defmodule AnimeData.TVDB.Importer do
   @moduledoc false
 
-  alias AnimeData.TVDB.{Artwork, Season, Series}
+  alias AnimeData.TVDB.{Artwork, Movie, Season, Series}
+
+  def movie(movie) when is_map(movie) do
+    status = movie["status"] || %{}
+
+    Movie.upsert(%{
+      id: movie["id"],
+      name: movie["name"],
+      slug: movie["slug"],
+      overview: movie["overview"],
+      image_url: movie["image"],
+      first_released: movie |> get_in(["first_release", "date"]) |> date(),
+      year: to_optional_string(movie["year"]),
+      status_id: status["id"],
+      status_name: status["name"],
+      original_country: movie["originalCountry"],
+      original_language: movie["originalLanguage"],
+      runtime: movie["runtime"],
+      score: movie["score"],
+      raw: movie,
+      fetched_at: DateTime.utc_now()
+    })
+  end
 
   def series(series, artworks) when is_map(series) and is_list(artworks) do
     fetched_at = DateTime.utc_now()
@@ -51,7 +73,7 @@ defmodule AnimeData.TVDB.Importer do
                raw: row
              })
            end) do
-      remove_missing(Season.list!(), series_id, rows)
+      remove_missing(Season.for_series!(series_id), rows)
       :ok
     end
   end
@@ -73,7 +95,7 @@ defmodule AnimeData.TVDB.Importer do
                raw: row
              })
            end) do
-      remove_missing(Artwork.list!(), series_id, rows)
+      remove_missing(Artwork.for_series!(series_id), rows)
       :ok
     end
   end
@@ -87,11 +109,10 @@ defmodule AnimeData.TVDB.Importer do
     end)
   end
 
-  defp remove_missing(records, series_id, rows) do
+  defp remove_missing(records, rows) do
     current_ids = MapSet.new(rows, & &1["id"])
 
     records
-    |> Enum.filter(&(&1.series_id == series_id))
     |> Enum.reject(&MapSet.member?(current_ids, &1.id))
     |> Enum.each(&Ash.destroy!/1)
   end

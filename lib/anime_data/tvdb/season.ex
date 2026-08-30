@@ -13,6 +13,10 @@ defmodule AnimeData.TVDB.Season do
     references do
       reference :series, on_delete: :delete
     end
+
+    custom_indexes do
+      index [:series_id]
+    end
   end
 
   graphql do
@@ -22,10 +26,16 @@ defmodule AnimeData.TVDB.Season do
   code_interface do
     define :upsert
     define :list, action: :read
+    define :for_series, args: [:series_id]
   end
 
   actions do
     defaults [:read, :destroy]
+
+    read :for_series do
+      argument :series_id, :integer, allow_nil?: false
+      filter expr(series_id == ^arg(:series_id))
+    end
 
     create :upsert do
       primary? true

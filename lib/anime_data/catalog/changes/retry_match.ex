@@ -7,7 +7,9 @@ defmodule AnimeData.Catalog.Changes.RetryMatch do
     |> Ash.Changeset.before_action(fn changeset ->
       changeset
       |> Ash.Changeset.force_change_attribute(:tvdb_id, nil)
+      |> Ash.Changeset.force_change_attribute(:tvdb_type, nil)
       |> Ash.Changeset.force_change_attribute(:candidate_tvdb_id, nil)
+      |> Ash.Changeset.force_change_attribute(:candidate_tvdb_type, nil)
       |> Ash.Changeset.force_change_attribute(:status, :pending)
       |> Ash.Changeset.force_change_attribute(:match_confidence, nil)
       |> Ash.Changeset.force_change_attribute(:match_reasoning, nil)

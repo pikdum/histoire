@@ -7,9 +7,10 @@ defmodule AnimeData.Catalog.MatcherTest do
     tools = AshAi.Info.tools(AnimeData.TVDB)
 
     assert Enum.map(tools, & &1.name) == [
-             :search_tvdb_series,
-             :search_web_for_tvdb_series,
+             :search_tvdb_titles,
+             :search_web_for_tvdb_title,
              :get_tvdb_series,
+             :get_tvdb_movie,
              :get_tvdb_series_by_slug
            ]
 

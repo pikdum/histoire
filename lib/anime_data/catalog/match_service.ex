@@ -21,19 +21,25 @@ defmodule AnimeData.Catalog.MatchService do
 
     attributes =
       case decision do
-        %{status: :matched, tvdb_id: tvdb_id, confidence: confidence}
-        when is_integer(tvdb_id) and confidence >= threshold ->
+        %{status: :matched, tvdb_id: tvdb_id, tvdb_type: tvdb_type, confidence: confidence}
+        when is_integer(tvdb_id) and tvdb_type in [:series, :movie] and confidence >= threshold ->
           %{
             tvdb_id: tvdb_id,
+            tvdb_type: tvdb_type,
             candidate_tvdb_id: nil,
+            candidate_tvdb_type: nil,
             status: :matched,
             matched_at: attempted_at
           }
 
-        %{status: status, tvdb_id: tvdb_id} when status in [:matched, :needs_review] ->
+        %{status: status, tvdb_id: tvdb_id, tvdb_type: tvdb_type}
+        when status in [:matched, :needs_review] and is_integer(tvdb_id) and
+               tvdb_type in [:series, :movie] ->
           %{
             tvdb_id: nil,
+            tvdb_type: nil,
             candidate_tvdb_id: tvdb_id,
+            candidate_tvdb_type: tvdb_type,
             status: :needs_review,
             matched_at: nil
           }
@@ -41,28 +47,38 @@ defmodule AnimeData.Catalog.MatchService do
         %{status: :no_match} ->
           %{
             tvdb_id: nil,
+            tvdb_type: nil,
             candidate_tvdb_id: nil,
+            candidate_tvdb_type: nil,
             status: :no_match,
             matched_at: nil
           }
+
+        _invalid ->
+          nil
       end
 
     attributes =
-      Map.merge(attributes, %{
-        match_confidence: decision.confidence,
-        match_reasoning: decision.reasoning,
-        match_method: :llm,
-        last_attempted_at: attempted_at,
-        last_error: nil,
-        attempts: attempts
-      })
+      attributes &&
+        Map.merge(attributes, %{
+          match_confidence: decision.confidence,
+          match_reasoning: decision.reasoning,
+          match_method: :llm,
+          last_attempted_at: attempted_at,
+          last_error: nil,
+          attempts: attempts
+        })
 
-    with {:ok, updated} <- Mapping.record_result(mapping, attributes) do
+    with attributes when is_map(attributes) <- attributes,
+         {:ok, updated} <- Mapping.record_result(mapping, attributes) do
       if updated.tvdb_id do
-        _result = AnimeData.TVDB.Jobs.enqueue_series(updated.tvdb_id, priority: 0)
+        _result = AnimeData.TVDB.Jobs.enqueue(updated.tvdb_type, updated.tvdb_id, priority: 0)
       end
 
       {:ok, updated}
+    else
+      nil -> {:error, :invalid_match_decision}
+      {:error, error} -> {:error, error}
     end
   end
 

@@ -4,7 +4,7 @@ defmodule AnimeData.Catalog.MatchServiceTest do
 
   alias AnimeData.Catalog.{Mapping, MatchDecision, MatchService}
   alias AnimeData.SubsPlease.Importer
-  alias AnimeData.TVDB.Workers.Series
+  alias AnimeData.TVDB.Workers.{Movie, Series}
 
   setup do
     show_id = System.unique_integer([:positive])
@@ -18,6 +18,8 @@ defmodule AnimeData.Catalog.MatchServiceTest do
                fetched_at: ~U[2026-08-30 00:00:00Z]
              })
 
+    assert {:ok, 0} = Importer.releases(show_id, [])
+
     %{mapping: Mapping.get_by_subsplease_id!(show_id)}
   end
 
@@ -26,6 +28,7 @@ defmodule AnimeData.Catalog.MatchServiceTest do
       MatchDecision.new!(
         status: :matched,
         tvdb_id: 427_831,
+        tvdb_type: :series,
         confidence: 0.96,
         reasoning: "The synopsis and 2024 broadcast dates agree."
       )
@@ -33,6 +36,7 @@ defmodule AnimeData.Catalog.MatchServiceTest do
     assert {:ok, updated} = MatchService.apply_decision(mapping, decision)
     assert updated.status == :matched
     assert updated.tvdb_id == 427_831
+    assert updated.tvdb_type == :series
     assert updated.match_method == :llm
     assert updated.attempts == 1
     assert_enqueued worker: Series, args: %{"tvdb_id" => 427_831}, priority: 0
@@ -43,6 +47,7 @@ defmodule AnimeData.Catalog.MatchServiceTest do
       MatchDecision.new!(
         status: :matched,
         tvdb_id: 427_831,
+        tvdb_type: :series,
         confidence: 0.72,
         reasoning: "The title agrees but the date evidence is incomplete."
       )
@@ -51,10 +56,12 @@ defmodule AnimeData.Catalog.MatchServiceTest do
     assert review.status == :needs_review
     assert review.tvdb_id == nil
     assert review.candidate_tvdb_id == 427_831
+    assert review.candidate_tvdb_type == :series
 
     assert {:ok, accepted} = Mapping.accept_candidate(review)
     assert accepted.status == :matched
     assert accepted.tvdb_id == 427_831
+    assert accepted.tvdb_type == :series
     assert accepted.match_method == :manual
     assert_enqueued worker: Series, args: %{"tvdb_id" => 427_831}, priority: 0
   end
@@ -64,6 +71,7 @@ defmodule AnimeData.Catalog.MatchServiceTest do
       MatchDecision.new!(
         status: :matched,
         tvdb_id: 412_843,
+        tvdb_type: :series,
         confidence: 0.97,
         reasoning: "TVDB stores both seasons under one series."
       )
@@ -80,6 +88,8 @@ defmodule AnimeData.Catalog.MatchServiceTest do
                synopsis: "The second season.",
                fetched_at: ~U[2026-08-30 00:00:00Z]
              })
+
+    assert {:ok, 0} = Importer.releases(second_show_id, [])
 
     second_mapping = Mapping.get_by_subsplease_id!(second_show_id)
     assert {:ok, second} = MatchService.apply_decision(second_mapping, decision)
@@ -99,5 +109,38 @@ defmodule AnimeData.Catalog.MatchServiceTest do
     assert updated.status == :no_match
     assert updated.tvdb_id == nil
     assert updated.candidate_tvdb_id == nil
+  end
+
+  test "accepts a movie result and queues the movie mirror", %{mapping: mapping} do
+    decision =
+      MatchDecision.new!(
+        status: :matched,
+        tvdb_id: 199_463,
+        tvdb_type: :movie,
+        confidence: 0.98,
+        reasoning: "The Japanese and English titles identify Bakuten!! Movie."
+      )
+
+    assert {:ok, updated} = MatchService.apply_decision(mapping, decision)
+    assert updated.tvdb_type == :movie
+    assert_enqueued worker: Movie, args: %{"tvdb_id" => 199_463}, priority: 0
+  end
+
+  test "rejects a candidate without an entity type", %{mapping: mapping} do
+    decision =
+      MatchDecision.new!(
+        status: :matched,
+        tvdb_id: 199_463,
+        confidence: 0.98,
+        reasoning: "An ID without its TVDB entity type is ambiguous."
+      )
+
+    assert {:error, :invalid_match_decision} = MatchService.apply_decision(mapping, decision)
+    assert Mapping.get_by_id!(mapping.id).status == :pending
+  end
+
+  test "requires both an ID and entity type for a manual match", %{mapping: mapping} do
+    assert {:error, _error} = Mapping.set_tvdb(mapping, %{tvdb_id: 199_463})
+    assert {:error, _error} = Mapping.set_tvdb(mapping, %{tvdb_type: :movie})
   end
 end

@@ -6,15 +6,14 @@ enum MappingSortField {
   ID
   SUBSPLEASE_ID
   TVDB_ID
+  TVDB_TYPE
   CANDIDATE_TVDB_ID
+  CANDIDATE_TVDB_TYPE
   STATUS
   MATCH_CONFIDENCE
   MATCH_REASONING
   MATCH_METHOD
   MATCHED_AT
-  LAST_ATTEMPTED_AT
-  LAST_ERROR
-  ATTEMPTS
 }
 
 "A keyset page of :mapping"
@@ -30,59 +29,6 @@ type KeysetPageOfMapping {
 
   "The last keyset in the results"
   endKeyset: String
-}
-
-input MappingFilterAttempts {
-  isNil: Boolean
-  eq: Int
-  notEq: Int
-  in: [Int!]
-  lessThan: Int
-  greaterThan: Int
-  lessThanOrEqual: Int
-  greaterThanOrEqual: Int
-  isDistinctFrom: Int
-  isNotDistinctFrom: Int
-  rangeAdjacent: Int
-  rangeContains: String
-  rangeOverlaps: Int
-}
-
-input MappingFilterLastError {
-  isNil: Boolean
-  eq: String
-  notEq: String
-  in: [String]
-  lessThan: String
-  greaterThan: String
-  lessThanOrEqual: String
-  greaterThanOrEqual: String
-  contains: String
-  isDistinctFrom: String
-  isNotDistinctFrom: String
-  rangeAdjacent: String
-  rangeContains: String
-  rangeOverlaps: String
-  stringEndsWith: String
-  stringStartsWith: String
-  like: String
-  ilike: String
-}
-
-input MappingFilterLastAttemptedAt {
-  isNil: Boolean
-  eq: DateTime
-  notEq: DateTime
-  in: [DateTime]
-  lessThan: DateTime
-  greaterThan: DateTime
-  lessThanOrEqual: DateTime
-  greaterThanOrEqual: DateTime
-  isDistinctFrom: DateTime
-  isNotDistinctFrom: DateTime
-  rangeAdjacent: DateTime
-  rangeContains: String
-  rangeOverlaps: DateTime
 }
 
 input MappingFilterMatchedAt {
@@ -170,6 +116,22 @@ input MappingFilterStatus {
   rangeOverlaps: String
 }
 
+input MappingFilterCandidateTvdbType {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+}
+
 input MappingFilterCandidateTvdbId {
   isNil: Boolean
   eq: Int
@@ -184,6 +146,22 @@ input MappingFilterCandidateTvdbId {
   rangeAdjacent: Int
   rangeContains: String
   rangeOverlaps: Int
+}
+
+input MappingFilterTvdbType {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
 }
 
 input MappingFilterTvdbId {
@@ -241,17 +219,17 @@ input MappingFilterInput {
   id: MappingFilterId
   subspleaseId: MappingFilterSubspleaseId
   tvdbId: MappingFilterTvdbId
+  tvdbType: MappingFilterTvdbType
   candidateTvdbId: MappingFilterCandidateTvdbId
+  candidateTvdbType: MappingFilterCandidateTvdbType
   status: MappingFilterStatus
   matchConfidence: MappingFilterMatchConfidence
   matchReasoning: MappingFilterMatchReasoning
   matchMethod: MappingFilterMatchMethod
   matchedAt: MappingFilterMatchedAt
-  lastAttemptedAt: MappingFilterLastAttemptedAt
-  lastError: MappingFilterLastError
-  attempts: MappingFilterAttempts
   subspleaseShow: ShowFilterInput
   tvdbSeries: TvdbSeriesFilterInput
+  tvdbMovie: TvdbMovieFilterInput
 }
 
 input MappingSortInput {
@@ -263,17 +241,17 @@ type Mapping {
   id: ID!
   subspleaseId: Int!
   tvdbId: Int
+  tvdbType: String
   candidateTvdbId: Int
+  candidateTvdbType: String
   status: String!
   matchConfidence: Float
   matchReasoning: String
   matchMethod: String
   matchedAt: DateTime
-  lastAttemptedAt: DateTime
-  lastError: String
-  attempts: Int!
   subspleaseShow: Show
   tvdbSeries: TvdbSeries
+  tvdbMovie: TvdbMovie
 }
 
 enum SortOrder {
@@ -1505,6 +1483,358 @@ type TvdbSeason {
   series: TvdbSeries!
 }
 
+enum TvdbMovieSortField {
+  ID
+  NAME
+  SLUG
+  OVERVIEW
+  IMAGE_URL
+  FIRST_RELEASED
+  YEAR
+  STATUS_ID
+  STATUS_NAME
+  ORIGINAL_COUNTRY
+  ORIGINAL_LANGUAGE
+  RUNTIME
+  SCORE
+  FETCHED_AT
+}
+
+"A keyset page of :tvdb_movie"
+type KeysetPageOfTvdbMovie {
+  "Total count on all pages"
+  count: Int
+
+  "The records contained in the page"
+  results: [TvdbMovie!]
+
+  "The first keyset in the results"
+  startKeyset: String
+
+  "The last keyset in the results"
+  endKeyset: String
+}
+
+input TvdbMovieFilterFetchedAt {
+  isNil: Boolean
+  eq: DateTime
+  notEq: DateTime
+  in: [DateTime!]
+  lessThan: DateTime
+  greaterThan: DateTime
+  lessThanOrEqual: DateTime
+  greaterThanOrEqual: DateTime
+  isDistinctFrom: DateTime
+  isNotDistinctFrom: DateTime
+  rangeAdjacent: DateTime
+  rangeContains: String
+  rangeOverlaps: DateTime
+}
+
+input TvdbMovieFilterScore {
+  isNil: Boolean
+  eq: Float
+  notEq: Float
+  in: [Float]
+  lessThan: Float
+  greaterThan: Float
+  lessThanOrEqual: Float
+  greaterThanOrEqual: Float
+  isDistinctFrom: Float
+  isNotDistinctFrom: Float
+  rangeAdjacent: Float
+  rangeContains: String
+  rangeOverlaps: Float
+}
+
+input TvdbMovieFilterRuntime {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbMovieFilterOriginalLanguage {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbMovieFilterOriginalCountry {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbMovieFilterStatusName {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbMovieFilterStatusId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbMovieFilterYear {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbMovieFilterFirstReleased {
+  isNil: Boolean
+  eq: Date
+  notEq: Date
+  in: [Date]
+  lessThan: Date
+  greaterThan: Date
+  lessThanOrEqual: Date
+  greaterThanOrEqual: Date
+  isDistinctFrom: Date
+  isNotDistinctFrom: Date
+  rangeAdjacent: Date
+  rangeContains: String
+  rangeOverlaps: Date
+}
+
+input TvdbMovieFilterImageUrl {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbMovieFilterOverview {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbMovieFilterSlug {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbMovieFilterName {
+  isNil: Boolean
+  eq: String
+  notEq: String
+  in: [String!]
+  lessThan: String
+  greaterThan: String
+  lessThanOrEqual: String
+  greaterThanOrEqual: String
+  contains: String
+  isDistinctFrom: String
+  isNotDistinctFrom: String
+  rangeAdjacent: String
+  rangeContains: String
+  rangeOverlaps: String
+  stringEndsWith: String
+  stringStartsWith: String
+  like: String
+  ilike: String
+}
+
+input TvdbMovieFilterId {
+  isNil: Boolean
+  eq: Int
+  notEq: Int
+  in: [Int!]
+  lessThan: Int
+  greaterThan: Int
+  lessThanOrEqual: Int
+  greaterThanOrEqual: Int
+  isDistinctFrom: Int
+  isNotDistinctFrom: Int
+  rangeAdjacent: Int
+  rangeContains: String
+  rangeOverlaps: Int
+}
+
+input TvdbMovieFilterInput {
+  and: [TvdbMovieFilterInput!]
+  or: [TvdbMovieFilterInput!]
+  not: [TvdbMovieFilterInput!]
+  id: TvdbMovieFilterId
+  name: TvdbMovieFilterName
+  slug: TvdbMovieFilterSlug
+  overview: TvdbMovieFilterOverview
+  imageUrl: TvdbMovieFilterImageUrl
+  firstReleased: TvdbMovieFilterFirstReleased
+  year: TvdbMovieFilterYear
+  statusId: TvdbMovieFilterStatusId
+  statusName: TvdbMovieFilterStatusName
+  originalCountry: TvdbMovieFilterOriginalCountry
+  originalLanguage: TvdbMovieFilterOriginalLanguage
+  runtime: TvdbMovieFilterRuntime
+  score: TvdbMovieFilterScore
+  fetchedAt: TvdbMovieFilterFetchedAt
+  mappings: MappingFilterInput
+}
+
+input TvdbMovieSortInput {
+  order: SortOrder
+  field: TvdbMovieSortField!
+}
+
+type TvdbMovie {
+  id: ID!
+  name: String!
+  slug: String
+  overview: String
+  imageUrl: String
+  firstReleased: Date
+  year: String
+  statusId: Int
+  statusName: String
+  originalCountry: String
+  originalLanguage: String
+  runtime: Int
+  score: Float
+  fetchedAt: DateTime!
+  mappings(
+    "How to sort the records in the response"
+    sort: [MappingSortInput]
+
+    "A filter to limit the results"
+    filter: MappingFilterInput
+
+    "The number of records to return."
+    limit: Int
+
+    "The number of records to skip."
+    offset: Int
+  ): [Mapping!]!
+}
+
 enum TvdbSeriesSortField {
   ID
   NAME
@@ -1857,7 +2187,7 @@ input TvdbSeriesFilterInput {
   fetchedAt: TvdbSeriesFilterFetchedAt
   seasons: TvdbSeasonFilterInput
   artworks: TvdbArtworkFilterInput
-  mapping: MappingFilterInput
+  mappings: MappingFilterInput
 }
 
 input TvdbSeriesSortInput {
@@ -1908,7 +2238,19 @@ type TvdbSeries {
     "The number of records to skip."
     offset: Int
   ): [TvdbArtwork!]!
-  mapping: Mapping
+  mappings(
+    "How to sort the records in the response"
+    sort: [MappingSortInput]
+
+    "A filter to limit the results"
+    filter: MappingFilterInput
+
+    "The number of records to return."
+    limit: Int
+
+    "The number of records to skip."
+    offset: Int
+  ): [Mapping!]!
 }
 
 type RootQueryType {
@@ -1935,6 +2277,29 @@ type RootQueryType {
     "The number of records to return to the end. Maximum 250"
     last: Int
   ): KeysetPageOfTvdbSeries
+  tvdbMovie(
+    "The id of the record"
+    id: ID!
+  ): TvdbMovie
+  tvdbMovieList(
+    "How to sort the records in the response"
+    sort: [TvdbMovieSortInput]
+
+    "A filter to limit the results"
+    filter: TvdbMovieFilterInput
+
+    "The number of records to return from the beginning. Maximum 250"
+    first: Int
+
+    "Show records before the specified keyset."
+    before: String
+
+    "Show records after the specified keyset."
+    after: String
+
+    "The number of records to return to the end. Maximum 250"
+    last: Int
+  ): KeysetPageOfTvdbMovie
   tvdbSeasons(
     "How to sort the records in the response"
     sort: [TvdbSeasonSortInput]

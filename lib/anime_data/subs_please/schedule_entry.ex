@@ -13,6 +13,10 @@ defmodule AnimeData.SubsPlease.ScheduleEntry do
     references do
       reference :show, on_delete: :nilify
     end
+
+    custom_indexes do
+      index [:show_id]
+    end
   end
 
   graphql do

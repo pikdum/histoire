@@ -18,6 +18,7 @@ defmodule AnimeData.TVDB.Client do
   def search(query) when is_binary(query), do: get("/search", query: query)
   def fetch_series(id), do: get("/series/#{id}/extended")
   def fetch_series_by_slug(slug), do: get("/series/slug/#{slug}")
+  def fetch_movie(id), do: get("/movies/#{id}/extended")
 
   def fetch_artworks(id) do
     with {:ok, data} <- get("/series/#{id}/artworks"),

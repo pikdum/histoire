@@ -1,7 +1,7 @@
 defmodule AnimeData.TVDB.ImporterTest do
   use AnimeData.DataCase, async: true
 
-  alias AnimeData.TVDB.{Artwork, Importer, Season, Series}
+  alias AnimeData.TVDB.{Artwork, Importer, Movie, Season, Series}
 
   test "upserts a source-shaped series with seasons and artworks idempotently" do
     series = %{
@@ -70,5 +70,29 @@ defmodule AnimeData.TVDB.ImporterTest do
              Importer.series(%{"id" => 1, "name" => "Changed"}, [])
 
     assert %Series{name: "Original"} = Series.get_by_id!(1)
+  end
+
+  test "mirrors a movie extended response" do
+    movie = %{
+      "id" => 199_463,
+      "name" => "映画 バクテン!!",
+      "slug" => "199463-",
+      "year" => "2022",
+      "first_release" => %{"country" => "jpn", "date" => "2022-06-02"},
+      "originalCountry" => "jpn",
+      "originalLanguage" => "jpn",
+      "runtime" => 90,
+      "score" => 1048,
+      "status" => %{"id" => 5, "name" => "Released"}
+    }
+
+    assert {:ok, %Movie{id: 199_463}} = Importer.movie(movie)
+
+    assert %Movie{
+             name: "映画 バクテン!!",
+             first_released: ~D[2022-06-02],
+             runtime: 90,
+             status_name: "Released"
+           } = Movie.get_by_id!(199_463)
   end
 end

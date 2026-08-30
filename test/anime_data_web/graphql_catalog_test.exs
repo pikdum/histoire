@@ -17,6 +17,8 @@ defmodule AnimeDataWeb.GraphqlCatalogTest do
                fetched_at: ~U[2026-08-30 00:00:00Z]
              })
 
+    assert {:ok, 0} = Importer.releases(show_id, [])
+
     assert {:ok, _series} =
              Series.upsert(%{
                id: tvdb_id,
@@ -25,7 +27,9 @@ defmodule AnimeDataWeb.GraphqlCatalogTest do
              })
 
     mapping = Mapping.get_by_subsplease_id!(show_id)
-    assert {:ok, mapping} = Mapping.set_tvdb(mapping, %{tvdb_id: tvdb_id})
+
+    assert {:ok, mapping} =
+             Mapping.set_tvdb(mapping, %{tvdb_id: tvdb_id, tvdb_type: :series})
 
     query = """
     query Mapping($id: ID!) {

@@ -1,4 +1,4 @@
-defmodule AnimeData.TVDB.Series do
+defmodule AnimeData.TVDB.Movie do
   use Ash.Resource,
     otp_app: :anime_data,
     domain: AnimeData.TVDB,
@@ -7,12 +7,12 @@ defmodule AnimeData.TVDB.Series do
 
   postgres do
     schema "tvdb"
-    table "series"
+    table "movies"
     repo AnimeData.Repo
   end
 
   graphql do
-    type :tvdb_series
+    type :tvdb_movie
   end
 
   code_interface do
@@ -33,40 +33,20 @@ defmodule AnimeData.TVDB.Series do
         :slug,
         :overview,
         :image_url,
-        :first_aired,
-        :last_aired,
-        :next_aired,
+        :first_released,
         :year,
         :status_id,
         :status_name,
         :original_country,
         :original_language,
-        :average_runtime,
+        :runtime,
         :score,
         :raw,
         :fetched_at
       ]
 
       upsert? true
-
-      upsert_fields [
-        :name,
-        :slug,
-        :overview,
-        :image_url,
-        :first_aired,
-        :last_aired,
-        :next_aired,
-        :year,
-        :status_id,
-        :status_name,
-        :original_country,
-        :original_language,
-        :average_runtime,
-        :score,
-        :raw,
-        :fetched_at
-      ]
+      upsert_fields {:replace, [:id, :inserted_at]}
     end
   end
 
@@ -86,15 +66,13 @@ defmodule AnimeData.TVDB.Series do
     attribute :slug, :string, public?: true
     attribute :overview, :string, public?: true
     attribute :image_url, :string, public?: true
-    attribute :first_aired, :date, public?: true
-    attribute :last_aired, :date, public?: true
-    attribute :next_aired, :date, public?: true
+    attribute :first_released, :date, public?: true
     attribute :year, :string, public?: true
     attribute :status_id, :integer, public?: true
     attribute :status_name, :string, public?: true
     attribute :original_country, :string, public?: true
     attribute :original_language, :string, public?: true
-    attribute :average_runtime, :integer, public?: true
+    attribute :runtime, :integer, public?: true
     attribute :score, :float, public?: true
     attribute :raw, :map
 
@@ -107,17 +85,9 @@ defmodule AnimeData.TVDB.Series do
   end
 
   relationships do
-    has_many :seasons, AnimeData.TVDB.Season do
-      public? true
-    end
-
-    has_many :artworks, AnimeData.TVDB.Artwork do
-      public? true
-    end
-
     has_many :mappings, AnimeData.Catalog.Mapping do
       destination_attribute :tvdb_id
-      filter expr(tvdb_type == :series)
+      filter expr(tvdb_type == :movie)
       public? true
     end
   end

@@ -8,7 +8,11 @@ defmodule AnimeData.Catalog.MatchDecision do
       description: "Whether a reliable match was found"
 
     field :tvdb_id, :integer,
-      description: "The numeric TVDB series ID, or null when there is no candidate"
+      description: "The numeric TVDB ID, or null when there is no candidate"
+
+    field :tvdb_type, :atom,
+      constraints: [one_of: [:series, :movie]],
+      description: "Whether the candidate is a TVDB series or movie, or null with no candidate"
 
     field :confidence, :float,
       allow_nil?: false,
