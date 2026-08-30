@@ -1,5 +1,11 @@
 defmodule AnimeData.TVDB do
-  use Ash.Domain, otp_app: :anime_data, extensions: [AshGraphql.Domain, AshAi]
+  use Ash.Domain,
+    otp_app: :anime_data,
+    extensions: [AshGraphql.Domain, AshAdmin.Domain, AshAi]
+
+  admin do
+    show? true
+  end
 
   graphql do
     authorize? false

@@ -1,5 +1,9 @@
 defmodule AnimeData.SubsPlease do
-  use Ash.Domain, otp_app: :anime_data, extensions: [AshGraphql.Domain]
+  use Ash.Domain, otp_app: :anime_data, extensions: [AshGraphql.Domain, AshAdmin.Domain]
+
+  admin do
+    show? true
+  end
 
   graphql do
     authorize? false
