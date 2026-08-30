@@ -12,7 +12,14 @@ config :ash_oban, pro?: false
 config :anime_data, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.Postgres,
-  queues: [subsplease: 1, tvdb: 1, tvdb_match: 1, default: 5],
+  queues: [
+    schedulers: 2,
+    subsplease_poll: 1,
+    subsplease_fetch: 1,
+    tvdb_match: 1,
+    tvdb_fetch: 1,
+    default: 5
+  ],
   lifeline: [rescue_after: {2, :hours}],
   pruner: [max_age: {1, :day}],
   repo: AnimeData.Repo,

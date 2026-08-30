@@ -8,7 +8,7 @@ defmodule AnimeData.SubsPlease.Sync do
     scheduled_actions do
       schedule :daily_discovery, "0 4 * * *" do
         action :discover
-        queue :subsplease
+        queue :subsplease_poll
         priority 1
         max_attempts 5
         tags ["subsplease", "discovery"]
@@ -17,7 +17,7 @@ defmodule AnimeData.SubsPlease.Sync do
 
       schedule :latest_poll, "*/30 * * * *" do
         action :latest
-        queue :subsplease
+        queue :subsplease_poll
         priority 0
         max_attempts 5
         tags ["subsplease", "latest"]
@@ -26,7 +26,7 @@ defmodule AnimeData.SubsPlease.Sync do
 
       schedule :schedule_poll, "15 */6 * * *" do
         action :schedule
-        queue :subsplease
+        queue :subsplease_poll
         priority 0
         max_attempts 5
         tags ["subsplease", "schedule"]

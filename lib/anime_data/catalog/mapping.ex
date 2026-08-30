@@ -2,7 +2,7 @@ defmodule AnimeData.Catalog.Mapping do
   use Ash.Resource,
     otp_app: :anime_data,
     domain: AnimeData.Catalog,
-    extensions: [AshGraphql.Resource, AshAdmin.Resource],
+    extensions: [AshGraphql.Resource, AshAdmin.Resource, AshOban],
     data_layer: AshPostgres.DataLayer
 
   postgres do
@@ -16,6 +16,28 @@ defmodule AnimeData.Catalog.Mapping do
     end
   end
 
+  oban do
+    shared_context [:job]
+
+    triggers do
+      trigger :match_tvdb do
+        action :run_tvdb_match
+        on_error :record_match_failure
+        where expr(status == :pending and is_nil(tvdb_id))
+        scheduler_cron "* * * * *"
+        queue :tvdb_match
+        scheduler_queue :schedulers
+        worker_priority 2
+        scheduler_priority 1
+        max_attempts 3
+        lock_for_update? false
+        tags ["catalog", "tvdb-match"]
+        worker_module_name AnimeData.Catalog.Workers.MatchTVDB
+        scheduler_module_name AnimeData.Catalog.Schedulers.MatchTVDB
+      end
+    end
+  end
+
   graphql do
     type :mapping
   end
@@ -26,7 +48,7 @@ defmodule AnimeData.Catalog.Mapping do
     define :get_by_subsplease_id, action: :read, get_by: [:subsplease_id]
     define :without_tvdb, action: :read
     define :record_result
-    define :record_failure
+    define :run_tvdb_match
     define :set_tvdb
     define :accept_candidate
     define :retry_match
@@ -61,6 +83,13 @@ defmodule AnimeData.Catalog.Mapping do
       change AnimeData.Catalog.Changes.RetryMatch
     end
 
+    update :run_tvdb_match do
+      transaction? false
+      require_atomic? false
+      accept []
+      change AnimeData.Catalog.Changes.RunTVDBMatch
+    end
+
     update :record_result do
       require_atomic? false
 
@@ -78,10 +107,15 @@ defmodule AnimeData.Catalog.Mapping do
       ]
     end
 
-    update :record_failure do
+    update :record_match_failure do
       require_atomic? false
-      accept [:last_attempted_at, :last_error, :attempts]
-      change set_attribute(:status, :failed)
+      accept []
+
+      argument :error, :term do
+        allow_nil? false
+      end
+
+      change AnimeData.Catalog.Changes.RecordMatchFailure
     end
 
     read :without_tvdb do
@@ -166,6 +200,5 @@ defmodule AnimeData.Catalog.Mapping do
 
   identities do
     identity :unique_subsplease_id, [:subsplease_id]
-    identity :unique_tvdb_id, [:tvdb_id], nils_distinct?: true
   end
 end

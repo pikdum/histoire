@@ -8,7 +8,7 @@ defmodule AnimeData.TVDB.Sync do
     scheduled_actions do
       schedule :daily_refresh, "30 5 * * *" do
         action :refresh_all
-        queue :tvdb
+        queue :schedulers
         priority 3
         max_attempts 5
         tags ["tvdb", "refresh-all"]

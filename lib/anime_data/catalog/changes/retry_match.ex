@@ -16,7 +16,7 @@ defmodule AnimeData.Catalog.Changes.RetryMatch do
       |> Ash.Changeset.force_change_attribute(:last_error, nil)
     end)
     |> Ash.Changeset.after_action(fn _changeset, mapping ->
-      _result = AnimeData.Catalog.MatchJobs.enqueue(mapping.id, priority: 0)
+      _job = AshOban.run_trigger(mapping, :match_tvdb, priority: 0)
       {:ok, mapping}
     end)
   end

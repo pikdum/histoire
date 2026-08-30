@@ -2,7 +2,7 @@ defmodule AnimeData.TVDB.Workers.Series do
   @moduledoc false
 
   use Oban.Worker,
-    queue: :tvdb,
+    queue: :tvdb_fetch,
     priority: 3,
     max_attempts: 5,
     tags: ["tvdb", "series"],

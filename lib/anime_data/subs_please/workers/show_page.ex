@@ -2,7 +2,7 @@ defmodule AnimeData.SubsPlease.Workers.ShowPage do
   @moduledoc false
 
   use Oban.Worker,
-    queue: :subsplease,
+    queue: :subsplease_fetch,
     priority: 3,
     max_attempts: 5,
     tags: ["subsplease", "show-page"],

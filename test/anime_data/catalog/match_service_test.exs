@@ -59,6 +59,33 @@ defmodule AnimeData.Catalog.MatchServiceTest do
     assert_enqueued worker: Series, args: %{"tvdb_id" => 427_831}, priority: 0
   end
 
+  test "allows multiple SubsPlease seasons to map to one TVDB series", %{mapping: mapping} do
+    decision =
+      MatchDecision.new!(
+        status: :matched,
+        tvdb_id: 412_843,
+        confidence: 0.97,
+        reasoning: "TVDB stores both seasons under one series."
+      )
+
+    assert {:ok, first} = MatchService.apply_decision(mapping, decision)
+
+    second_show_id = System.unique_integer([:positive])
+
+    assert {:ok, _show} =
+             Importer.show(%{
+               id: second_show_id,
+               slug: "second-season-#{second_show_id}",
+               name: "Example Show S2",
+               synopsis: "The second season.",
+               fetched_at: ~U[2026-08-30 00:00:00Z]
+             })
+
+    second_mapping = Mapping.get_by_subsplease_id!(second_show_id)
+    assert {:ok, second} = MatchService.apply_decision(second_mapping, decision)
+    assert first.tvdb_id == second.tvdb_id
+  end
+
   test "records an explicit no-match without inventing an ID", %{mapping: mapping} do
     decision =
       MatchDecision.new!(

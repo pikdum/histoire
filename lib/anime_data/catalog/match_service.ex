@@ -1,9 +1,7 @@
 defmodule AnimeData.Catalog.MatchService do
   @moduledoc false
 
-  import Ash.Query
-
-  alias AnimeData.Catalog.{Mapping, MatchDecision, Matcher, MatchJobs}
+  alias AnimeData.Catalog.{Mapping, MatchDecision, Matcher}
   alias AnimeData.SubsPlease.Show
 
   def run(mapping_id) do
@@ -13,22 +11,6 @@ defmodule AnimeData.Catalog.MatchService do
       :ok
     else
       do_run(mapping)
-    end
-  end
-
-  def enqueue_pending do
-    results =
-      Mapping
-      |> filter(status == :pending and is_nil(tvdb_id))
-      |> Ash.read!()
-      |> Enum.with_index()
-      |> Enum.map(fn {mapping, index} ->
-        MatchJobs.enqueue(mapping.id, priority: 3, schedule_in: index * 5)
-      end)
-
-    case Enum.find(results, &match?({:error, _}, &1)) do
-      nil -> {:ok, %{jobs: length(results)}}
-      {:error, error} -> {:error, error}
     end
   end
 
@@ -98,11 +80,11 @@ defmodule AnimeData.Catalog.MatchService do
       {:ok, decision} ->
         case apply_decision(mapping, decision) do
           {:ok, _mapping} -> :ok
-          {:error, error} -> record_failure(mapping, error)
+          {:error, error} -> {:error, error}
         end
 
       {:error, error} ->
-        record_failure(mapping, error)
+        {:error, error}
     end
   end
 
@@ -112,16 +94,5 @@ defmodule AnimeData.Catalog.MatchService do
     error -> {:error, error}
   catch
     kind, reason -> {:error, {kind, reason}}
-  end
-
-  defp record_failure(mapping, error) do
-    attributes = %{
-      last_attempted_at: DateTime.utc_now(),
-      last_error: inspect(error, limit: 20, printable_limit: 2_000),
-      attempts: mapping.attempts + 1
-    }
-
-    _result = Mapping.record_failure(mapping, attributes)
-    {:error, error}
   end
 end

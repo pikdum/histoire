@@ -2,7 +2,7 @@ defmodule AnimeData.SubsPlease.Workers.Release do
   @moduledoc false
 
   use Oban.Worker,
-    queue: :subsplease,
+    queue: :subsplease_fetch,
     priority: 3,
     max_attempts: 5,
     tags: ["subsplease", "releases"],
@@ -17,7 +17,7 @@ defmodule AnimeData.SubsPlease.Workers.Release do
       retryable: [:priority, :scheduled_at]
     ]
 
-  alias AnimeData.Catalog.{Mapping, MatchJobs}
+  alias AnimeData.Catalog.Mapping
   alias AnimeData.SubsPlease.{Client, Importer}
 
   @impl Oban.Worker
@@ -31,7 +31,8 @@ defmodule AnimeData.SubsPlease.Workers.Release do
   end
 
   defp maybe_enqueue_match(%{tvdb_id: nil, status: :pending} = mapping) do
-    MatchJobs.enqueue(mapping.id, priority: 1)
+    _job = AshOban.run_trigger(mapping, :match_tvdb)
+    {:ok, :enqueued}
   end
 
   defp maybe_enqueue_match(_mapping), do: {:ok, :not_needed}

@@ -9,7 +9,7 @@
 3. Confident results update `public.mappings`; ambiguous results remain `needs_review` for AshAdmin.
 4. Accepted TVDB IDs trigger a mirror refresh into `tvdb.series`, seasons, and artworks.
 
-The hot SubsPlease latest poll runs every 30 minutes, schedule polling every six hours, and full discovery daily. Source-wide rate limiters and single-worker Oban queues bound request pressure. TVDB refreshes run daily.
+The hot SubsPlease latest poll runs every 30 minutes, schedule polling every six hours, and full discovery daily. Separate polling, source-fetch, matching, and scheduler queues isolate workloads while source-wide rate limiters bound request pressure. TVDB refreshes run daily, and an AshOban trigger continuously recovers pending mappings.
 
 ## Development
 
@@ -29,11 +29,10 @@ Useful endpoints:
 - Oban Web: `http://localhost:4000/oban`
 - health: `http://localhost:4000/health`
 
-Run an initial discovery or matching pass from IEx:
+Run an initial discovery pass from IEx. Pending mappings are scheduled automatically by their AshOban trigger:
 
 ```elixir
 AnimeData.SubsPlease.Sync.discover()
-AnimeData.Catalog.MatchSync.enqueue_pending()
 ```
 
 `ANIME_DATA_MATCHING_MODEL` accepts any ReqLLM model specification. The default is `openai_codex:gpt-5.6-luna`. Development can read a native Codex `auth.json` through `CODEX_AUTH_FILE`. For deployment, use `REQ_LLM_OAUTH_FILE` pointing at a writable secret/state file with an `openai-codex` entry; ReqLLM may refresh it in place, so do not put it in the immutable Nix store.
