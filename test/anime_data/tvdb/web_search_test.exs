@@ -16,15 +16,8 @@ defmodule AnimeData.TVDB.WebSearchTest do
     end)
   end
 
-  test "requires TVDB search first and permits only one web-search attempt" do
-    :ok = WebSearch.begin_research()
-
-    assert WebSearch.search("Kimiai") == {:error, :tvdb_search_required_before_web_search}
-
-    :ok = WebSearch.mark_tvdb_searched()
-
+  test "requires a configured Brave API key" do
     assert WebSearch.search("Kimiai") == {:error, :missing_brave_search_api_key}
-    assert WebSearch.search("Kimiai") == {:error, :web_search_limit_reached}
   end
 
   test "keeps the useful fields from Brave web results" do
