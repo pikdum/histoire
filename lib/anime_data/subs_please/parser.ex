@@ -66,12 +66,17 @@ defmodule AnimeData.SubsPlease.Parser do
   end
 
   def schedule(%{"schedule" => schedule}) when is_map(schedule) do
-    Enum.flat_map(schedule, fn {weekday, entries} ->
-      Enum.map(entries, &Map.put(&1, "weekday", weekday))
-    end)
+    if Enum.all?(schedule, fn {_weekday, entries} -> is_list(entries) end) do
+      {:ok,
+       Enum.flat_map(schedule, fn {weekday, entries} ->
+         Enum.map(entries, &Map.put(&1, "weekday", weekday))
+       end)}
+    else
+      {:error, :invalid_schedule_payload}
+    end
   end
 
-  def schedule(_payload), do: []
+  def schedule(_payload), do: {:error, :invalid_schedule_payload}
 
   def slug_from_page(nil), do: ""
 

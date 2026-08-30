@@ -35,6 +35,7 @@ defmodule AnimeData.SubsPlease.ImporterTest do
     ]
 
     assert {:ok, %Show{id: 824}} = Importer.show(show_attributes)
+    assert {:error, _error} = Mapping.get_by_subsplease_id(824)
     assert {:ok, 1} = Importer.releases(824, releases)
     assert {:ok, 1} = Importer.releases(824, releases)
 
@@ -45,5 +46,36 @@ defmodule AnimeData.SubsPlease.ImporterTest do
 
     assert [%{resolution: "1080", magnet_uri: "magnet:?xt=urn:btih:one"}] =
              Ash.load!(release, :downloads).downloads
+  end
+
+  test "does not replace downloads when a release payload omits the collection" do
+    assert {:ok, _show} =
+             Importer.show(%{
+               id: 824,
+               slug: "acro-trip",
+               name: "Acro Trip",
+               fetched_at: ~U[2026-08-30 00:00:00Z]
+             })
+
+    release = %{
+      kind: :episode,
+      name: "Acro Trip - 12",
+      raw: %{
+        "time" => "12/11/24",
+        "release_date" => "Wed, 11 Dec 2024 14:17:56 +0000",
+        "episode" => "12",
+        "downloads" => [%{"res" => "1080", "magnet" => "magnet:?xt=urn:btih:one"}]
+      }
+    }
+
+    assert {:ok, 1} = Importer.releases(824, [release])
+
+    assert {:error, {:missing_collection, "downloads"}} =
+             Importer.releases(824, [
+               put_in(release, [:raw], Map.delete(release.raw, "downloads"))
+             ])
+
+    assert [%Release{} = stored] = Release.list!()
+    assert [%{resolution: "1080"}] = Ash.load!(stored, :downloads).downloads
   end
 end

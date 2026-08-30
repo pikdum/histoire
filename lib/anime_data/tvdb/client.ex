@@ -20,8 +20,9 @@ defmodule AnimeData.TVDB.Client do
   def fetch_series_by_slug(slug), do: get("/series/slug/#{slug}")
 
   def fetch_artworks(id) do
-    with {:ok, data} <- get("/series/#{id}/artworks") do
-      {:ok, data["artworks"] || []}
+    with {:ok, data} <- get("/series/#{id}/artworks"),
+         {:ok, artworks} <- required_list(data, "artworks") do
+      {:ok, artworks}
     end
   end
 
@@ -74,4 +75,12 @@ defmodule AnimeData.TVDB.Client do
 
   defp maybe_put_auth(opts, nil), do: opts
   defp maybe_put_auth(opts, token), do: Keyword.put(opts, :auth, {:bearer, token})
+
+  defp required_list(map, key) do
+    case Map.fetch(map, key) do
+      {:ok, value} when is_list(value) -> {:ok, value}
+      {:ok, value} -> {:error, {:invalid_collection, key, value}}
+      :error -> {:error, {:missing_collection, key}}
+    end
+  end
 end

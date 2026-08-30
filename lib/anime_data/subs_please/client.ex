@@ -32,7 +32,7 @@ defmodule AnimeData.SubsPlease.Client do
 
   def fetch_schedule do
     with {:ok, payload} <- get_json("/api/", f: "schedule", tz: @timezone) do
-      {:ok, Parser.schedule(payload)}
+      Parser.schedule(payload)
     end
   end
 

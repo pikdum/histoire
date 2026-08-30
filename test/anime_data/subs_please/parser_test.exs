@@ -46,4 +46,12 @@ defmodule AnimeData.SubsPlease.ParserTest do
              %{kind: :batch, name: "Acro Trip - 01-12 (Batch)"}
            ] = Enum.map(Parser.releases(payload), &Map.take(&1, [:kind, :name]))
   end
+
+  test "distinguishes an empty schedule from an invalid response" do
+    assert {:ok, []} = Parser.schedule(%{"schedule" => %{}})
+    assert {:error, :invalid_schedule_payload} = Parser.schedule(%{})
+
+    assert {:error, :invalid_schedule_payload} =
+             Parser.schedule(%{"schedule" => %{"Monday" => nil}})
+  end
 end

@@ -5,19 +5,14 @@ defmodule AnimeData.SubsPlease.Importer do
   alias AnimeData.SubsPlease.{DateParser, Download, Parser, Release, ScheduleEntry, Show}
 
   def show(attributes) do
-    with {:ok, show} <- Show.upsert(attributes),
-         {:ok, _mapping} <- Mapping.upsert_subsplease(%{subsplease_id: show.id}) do
-      {:ok, show}
-    end
+    Show.upsert(attributes)
   end
 
-  def releases(show_id, releases) do
-    Enum.reduce_while(releases, {:ok, 0}, fn release, {:ok, count} ->
-      case release(show_id, release) do
-        {:ok, _release} -> {:cont, {:ok, count + 1}}
-        {:error, error} -> {:halt, {:error, error}}
-      end
-    end)
+  def releases(show_id, releases) when is_list(releases) do
+    with {:ok, count} <- import_releases(show_id, releases),
+         {:ok, _mapping} <- Mapping.upsert_subsplease(%{subsplease_id: show_id}) do
+      {:ok, count}
+    end
   end
 
   def schedule(entries) do
@@ -57,7 +52,8 @@ defmodule AnimeData.SubsPlease.Importer do
   end
 
   defp release(show_id, %{kind: kind, name: name, raw: row}) do
-    with {:ok, source_date} <- DateParser.source_date(row["time"]),
+    with {:ok, downloads} <- required_list(row, "downloads"),
+         {:ok, source_date} <- DateParser.source_date(row["time"]),
          {:ok, released_at} <- DateParser.released_at(row["release_date"]),
          {:ok, release} <-
            Release.upsert(%{
@@ -70,9 +66,18 @@ defmodule AnimeData.SubsPlease.Importer do
              raw_time: row["time"],
              raw: row
            }),
-         :ok <- downloads(release.id, row["downloads"] || []) do
+         :ok <- downloads(release.id, downloads) do
       {:ok, release}
     end
+  end
+
+  defp import_releases(show_id, releases) do
+    Enum.reduce_while(releases, {:ok, 0}, fn release, {:ok, count} ->
+      case release(show_id, release) do
+        {:ok, _release} -> {:cont, {:ok, count + 1}}
+        {:error, error} -> {:halt, {:error, error}}
+      end
+    end)
   end
 
   defp downloads(release_id, downloads) do
@@ -99,6 +104,14 @@ defmodule AnimeData.SubsPlease.Importer do
       |> Enum.each(&Download.destroy!/1)
 
       :ok
+    end
+  end
+
+  defp required_list(map, key) do
+    case Map.fetch(map, key) do
+      {:ok, value} when is_list(value) -> {:ok, value}
+      {:ok, value} -> {:error, {:invalid_collection, key, value}}
+      :error -> {:error, {:missing_collection, key}}
     end
   end
 end

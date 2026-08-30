@@ -7,7 +7,8 @@ defmodule AnimeData.TVDB.Importer do
     fetched_at = DateTime.utc_now()
     status = series["status"] || %{}
 
-    with {:ok, record} <-
+    with {:ok, seasons} <- required_list(series, "seasons"),
+         {:ok, record} <-
            Series.upsert(%{
              id: series["id"],
              name: series["name"],
@@ -27,7 +28,7 @@ defmodule AnimeData.TVDB.Importer do
              raw: series,
              fetched_at: fetched_at
            }),
-         :ok <- replace_seasons(record.id, series["seasons"] || []),
+         :ok <- replace_seasons(record.id, seasons),
          :ok <- replace_artworks(record.id, artworks) do
       {:ok, record}
     end
@@ -107,4 +108,12 @@ defmodule AnimeData.TVDB.Importer do
 
   defp to_optional_string(nil), do: nil
   defp to_optional_string(value), do: to_string(value)
+
+  defp required_list(map, key) do
+    case Map.fetch(map, key) do
+      {:ok, value} when is_list(value) -> {:ok, value}
+      {:ok, value} -> {:error, {:invalid_collection, key, value}}
+      :error -> {:error, {:missing_collection, key}}
+    end
+  end
 end

@@ -60,4 +60,15 @@ defmodule AnimeData.TVDB.ImporterTest do
     assert {:ok, _series} = Importer.series(series, [])
     assert [] = Artwork.list!()
   end
+
+  test "does not modify a series when its seasons collection is missing" do
+    original = %{"id" => 1, "name" => "Original", "seasons" => []}
+
+    assert {:ok, _series} = Importer.series(original, [])
+
+    assert {:error, {:missing_collection, "seasons"}} =
+             Importer.series(%{"id" => 1, "name" => "Changed"}, [])
+
+    assert %Series{name: "Original"} = Series.get_by_id!(1)
+  end
 end
