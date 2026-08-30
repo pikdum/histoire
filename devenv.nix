@@ -7,6 +7,8 @@
 }:
 
 {
+  dotenv.enable = true;
+
   languages.nix.enable = true;
   languages.elixir = {
     enable = true;
