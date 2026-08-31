@@ -1,7 +1,8 @@
 defmodule Histoire.Catalog.MatchService do
   @moduledoc false
 
-  alias Histoire.Catalog.{Mapping, MatchDecision, Matcher}
+  alias Histoire.Catalog.{MatchDecision, Matcher}
+  alias Histoire.Catalog.SubsPleaseTVDBShowMatch, as: Mapping
   alias Histoire.SubsPlease.Show
 
   def run(mapping_id) do

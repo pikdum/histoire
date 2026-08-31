@@ -3,7 +3,7 @@ defmodule Histoire.TVDB.SyncService do
 
   import Ash.Query
 
-  alias Histoire.Catalog.Mapping
+  alias Histoire.Catalog.SubsPleaseTVDBShowMatch, as: Mapping
   alias Histoire.TVDB.{Client, Importer, Jobs}
 
   def series(tvdb_id) do

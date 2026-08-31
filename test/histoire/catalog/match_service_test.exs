@@ -2,7 +2,8 @@ defmodule Histoire.Catalog.MatchServiceTest do
   use Histoire.DataCase, async: true
   use Oban.Testing, repo: Histoire.Repo
 
-  alias Histoire.Catalog.{Mapping, MatchDecision, MatchService}
+  alias Histoire.Catalog.{MatchDecision, MatchService}
+  alias Histoire.Catalog.SubsPleaseTVDBShowMatch, as: Mapping
   alias Histoire.SubsPlease.Importer
   alias Histoire.TVDB.Workers.{Movie, Series}
 

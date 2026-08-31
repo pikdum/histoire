@@ -1,7 +1,7 @@
 defmodule Histoire.SubsPlease.ImporterTest do
   use Histoire.DataCase, async: true
 
-  alias Histoire.Catalog.Mapping
+  alias Histoire.Catalog.SubsPleaseTVDBShowMatch, as: Mapping
   alias Histoire.SubsPlease.{Importer, Release, Show}
 
   test "upserts a source-shaped show, mapping, release, and downloads idempotently" do

@@ -17,7 +17,7 @@ defmodule Histoire.SubsPlease.Workers.Release do
       retryable: [:priority, :scheduled_at]
     ]
 
-  alias Histoire.Catalog.Mapping
+  alias Histoire.Catalog.SubsPleaseTVDBShowMatch, as: Mapping
   alias Histoire.SubsPlease.{Client, Importer}
 
   @impl Oban.Worker

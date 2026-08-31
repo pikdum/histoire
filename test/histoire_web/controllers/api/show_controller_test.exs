@@ -1,7 +1,7 @@
 defmodule HistoireWeb.Api.ShowControllerTest do
   use HistoireWeb.ConnCase, async: true
 
-  alias Histoire.Catalog.Mapping
+  alias Histoire.Catalog.SubsPleaseTVDBShowMatch, as: Mapping
   alias Histoire.SubsPlease.{Download, Release, ScheduleEntry, Show}
   alias Histoire.TVDB.{Artwork, Season, Series}
 

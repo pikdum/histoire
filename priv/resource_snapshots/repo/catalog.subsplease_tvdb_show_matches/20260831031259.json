@@ -222,14 +222,13 @@
     }
   ],
   "custom_statements": [],
-  "drop_table_opted_out": true,
   "has_create_action": true,
-  "hash": "D13C2DFD4BB97B9A9F47674C1482646FECAC939DBED7A697917CF86FBF5B91E5",
+  "hash": "0068C520FB34FA4E9592292582A10850ABA8EAAB08D0E75BEACA83699F7F3530",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "mappings_unique_subsplease_id_index",
+      "index_name": "subsplease_tvdb_show_matches_unique_subsplease_id_index",
       "keys": [
         {
           "type": "atom",
@@ -247,6 +246,6 @@
     "strategy": null
   },
   "repo": "Elixir.Histoire.Repo",
-  "schema": "public",
-  "table": "mappings"
+  "schema": "catalog",
+  "table": "subsplease_tvdb_show_matches"
 }

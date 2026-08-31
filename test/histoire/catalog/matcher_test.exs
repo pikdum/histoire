@@ -1,7 +1,7 @@
 defmodule Histoire.Catalog.MatcherTest do
   use ExUnit.Case, async: true
 
-  alias Histoire.Catalog.Mapping
+  alias Histoire.Catalog.SubsPleaseTVDBShowMatch, as: Mapping
 
   test "exposes read-only TVDB and constrained web research tools" do
     tools = AshAi.Info.tools(Histoire.TVDB)

@@ -111,7 +111,7 @@ defmodule Histoire.TVDB.Series do
       public? true
     end
 
-    has_many :mappings, Histoire.Catalog.Mapping do
+    has_many :mappings, Histoire.Catalog.SubsPleaseTVDBShowMatch do
       destination_attribute :tvdb_id
       filter expr(tvdb_type == :series)
       public? true

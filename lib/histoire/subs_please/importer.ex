@@ -3,7 +3,7 @@ defmodule Histoire.SubsPlease.Importer do
 
   require Logger
 
-  alias Histoire.Catalog.Mapping
+  alias Histoire.Catalog.SubsPleaseTVDBShowMatch, as: Mapping
   alias Histoire.SubsPlease.{DateParser, Download, Parser, Release, ScheduleEntry, Show}
 
   def show(attributes) do

@@ -6,7 +6,7 @@ defmodule Histoire.Catalog do
   end
 
   resources do
-    resource Histoire.Catalog.Mapping
+    resource Histoire.Catalog.SubsPleaseTVDBShowMatch
     resource Histoire.Catalog.Matcher
   end
 end

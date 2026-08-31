@@ -81,7 +81,7 @@ defmodule Histoire.TVDB.Movie do
   end
 
   relationships do
-    has_many :mappings, Histoire.Catalog.Mapping do
+    has_many :mappings, Histoire.Catalog.SubsPleaseTVDBShowMatch do
       destination_attribute :tvdb_id
       filter expr(tvdb_type == :movie)
       public? true

@@ -1,4 +1,4 @@
-defmodule Histoire.Catalog.Mapping do
+defmodule Histoire.Catalog.SubsPleaseTVDBShowMatch do
   use Ash.Resource,
     otp_app: :histoire,
     domain: Histoire.Catalog,
@@ -28,8 +28,8 @@ defmodule Histoire.Catalog.Mapping do
   end
 
   postgres do
-    schema "public"
-    table "mappings"
+    schema "catalog"
+    table "subsplease_tvdb_show_matches"
     repo Histoire.Repo
 
     references do

@@ -70,7 +70,7 @@ defmodule Histoire.SubsPlease.Show do
       public? true
     end
 
-    has_one :mapping, Histoire.Catalog.Mapping do
+    has_one :mapping, Histoire.Catalog.SubsPleaseTVDBShowMatch do
       destination_attribute :subsplease_id
       public? true
     end
