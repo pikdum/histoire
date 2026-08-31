@@ -113,7 +113,7 @@ config :histoire, Histoire.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.25.4",
+  version: "0.27.2",
   path: System.get_env("MIX_ESBUILD_PATH"),
   histoire: [
     args:
@@ -124,7 +124,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "4.3.0",
+  version: "4.3.3",
   path: System.get_env("MIX_TAILWIND_PATH"),
   histoire: [
     args: ~w(

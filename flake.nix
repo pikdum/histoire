@@ -44,7 +44,7 @@
           mixFodDeps = beamPackages.fetchMixDeps {
             pname = "mix-deps-${pname}";
             inherit src version;
-            hash = "sha256-7MgyJ25jRnKV8EaW9k9n87xxcAFBPSF8Sj8jPn0tjDs=";
+            hash = "sha256-zdB4PgD87BA6vnM+o30Okor82xbipcgqGfvLxJpNoEs=";
           };
 
           nativeBuildInputs = [ pkgs.cmake ];
