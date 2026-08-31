@@ -21,7 +21,16 @@ defmodule HistoireWeb.Api.ShowControllerTest do
     Series.upsert!(%{
       id: 427_831,
       name: "Example",
-      overview: "TVDB overview",
+      overview: "TVDB Japanese overview",
+      original_language: "jpn",
+      raw: %{
+        "translations" => %{
+          "overviewTranslations" => [
+            %{"language" => "jpn", "overview" => "TVDB Japanese overview"},
+            %{"language" => "eng", "overview" => "TVDB English overview"}
+          ]
+        }
+      },
       image_url: "https://tvdb.test/series.jpg",
       fetched_at: now
     })
@@ -100,6 +109,7 @@ defmodule HistoireWeb.Api.ShowControllerTest do
 
     assert summary["id"] == show.id
     assert summary["title"] == "Example S2"
+    assert summary["synopsis"] == "TVDB English overview"
     assert summary["poster_url"] == "https://tvdb.test/season-2.jpg"
     assert summary["fanart_url"] == "https://tvdb.test/fanart.jpg"
     assert summary["latest_episode"] == "Example S2 - 12"
@@ -112,6 +122,25 @@ defmodule HistoireWeb.Api.ShowControllerTest do
     assert magnet =~ "urn:btih:acbd9ede5bb0356f24c413998175ba556280a423"
     refute magnet =~ "xl="
     assert length(Regex.scan(~r/(?:^|&)tr=/, magnet)) == 5
+  end
+
+  test "falls back to the English SubsPlease synopsis before translations are refreshed", %{
+    conn: conn
+  } do
+    Series.upsert!(%{
+      id: 427_831,
+      name: "Example",
+      overview: "TVDB Japanese overview",
+      original_language: "jpn",
+      raw: %{"overviewTranslations" => ["jpn", "eng"]},
+      image_url: "https://tvdb.test/series.jpg",
+      fetched_at: ~U[2026-08-30 12:00:00Z]
+    })
+
+    summary =
+      conn |> get(~p"/api/v1/shows") |> json_response(200) |> get_in(["data", Access.at(0)])
+
+    assert summary["synopsis"] == "SubsPlease synopsis"
   end
 
   test "returns the recurring schedule in UTC with resolved show metadata", %{conn: conn} do

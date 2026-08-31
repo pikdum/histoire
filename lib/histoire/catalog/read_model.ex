@@ -97,7 +97,7 @@ defmodule Histoire.Catalog.ReadModel do
     %{
       media_type: :series,
       tvdb_id: series.id,
-      overview: series.overview,
+      overview: english_overview(series),
       poster_url: poster,
       fanart_url: series.fanart_url
     }
@@ -108,7 +108,7 @@ defmodule Histoire.Catalog.ReadModel do
     %{
       media_type: :movie,
       tvdb_id: movie.id,
-      overview: movie.overview,
+      overview: english_overview(movie),
       poster_url: movie.image_url,
       fanart_url: nil
     }
@@ -116,6 +116,19 @@ defmodule Histoire.Catalog.ReadModel do
 
   defp mapped_metadata(_show) do
     %{media_type: nil, tvdb_id: nil, overview: nil, poster_url: nil, fanart_url: nil}
+  end
+
+  defp english_overview(record) do
+    translations = get_in(record.raw || %{}, ["translations", "overviewTranslations"]) || []
+
+    translated =
+      Enum.find_value(translations, fn
+        %{"language" => "eng", "overview" => overview} -> overview
+        _translation -> nil
+      end)
+
+    fallback = if record.original_language in [nil, "", "eng"], do: record.overview
+    first_present(translated, fallback)
   end
 
   defp release(release) do
