@@ -20,6 +20,7 @@ defmodule Histoire.TVDB do
     resource Histoire.TVDB.Movie
     resource Histoire.TVDB.Season
     resource Histoire.TVDB.Artwork
+    resource Histoire.TVDB.MovieArtwork
     resource Histoire.TVDB.Lookup
     resource Histoire.TVDB.Sync
   end

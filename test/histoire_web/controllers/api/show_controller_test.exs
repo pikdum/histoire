@@ -3,7 +3,7 @@ defmodule HistoireWeb.Api.ShowControllerTest do
 
   alias Histoire.Catalog.SubsPleaseTVDBShowMatch, as: Mapping
   alias Histoire.SubsPlease.{Download, Release, ScheduleEntry, Show}
-  alias Histoire.TVDB.{Artwork, Season, Series}
+  alias Histoire.TVDB.{Artwork, Movie, MovieArtwork, Season, Series}
 
   setup do
     now = ~U[2026-08-30 12:00:00Z]
@@ -141,6 +141,61 @@ defmodule HistoireWeb.Api.ShowControllerTest do
       conn |> get(~p"/api/v1/shows") |> json_response(200) |> get_in(["data", Access.at(0)])
 
     assert summary["synopsis"] == "SubsPlease synopsis"
+  end
+
+  test "returns English metadata and distinct artwork for mapped movies", %{
+    conn: conn,
+    show: show
+  } do
+    Movie.upsert!(%{
+      id: 199_463,
+      name: "映画 バクテン!!",
+      overview: nil,
+      image_url: "https://tvdb.test/movie-default.jpg",
+      original_language: "jpn",
+      raw: %{
+        "translations" => %{
+          "overviewTranslations" => [
+            %{"language" => "eng", "overview" => "TVDB English movie overview"}
+          ]
+        }
+      },
+      fetched_at: ~U[2026-08-30 12:00:00Z]
+    })
+
+    MovieArtwork.upsert!(%{
+      id: 63_982_338,
+      movie_id: 199_463,
+      artwork_type: 14,
+      image_url: "https://tvdb.test/movie-poster.jpg",
+      score: 100_000
+    })
+
+    MovieArtwork.upsert!(%{
+      id: 63_982_339,
+      movie_id: 199_463,
+      artwork_type: 15,
+      image_url: "https://tvdb.test/movie-background.jpg",
+      score: 100_000
+    })
+
+    show.id
+    |> Mapping.get_by_subsplease_id!()
+    |> Mapping.record_result!(%{
+      tvdb_id: 199_463,
+      tvdb_type: :movie,
+      status: :matched,
+      match_method: :manual,
+      matched_at: ~U[2026-08-30 12:00:00Z]
+    })
+
+    summary =
+      conn |> get(~p"/api/v1/shows") |> json_response(200) |> get_in(["data", Access.at(0)])
+
+    assert summary["media_type"] == "movie"
+    assert summary["synopsis"] == "TVDB English movie overview"
+    assert summary["poster_url"] == "https://tvdb.test/movie-poster.jpg"
+    assert summary["fanart_url"] == "https://tvdb.test/movie-background.jpg"
   end
 
   test "returns the recurring schedule in UTC with resolved show metadata", %{conn: conn} do

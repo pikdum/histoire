@@ -1,7 +1,7 @@
 defmodule Histoire.TVDB.ImporterTest do
   use Histoire.DataCase, async: true
 
-  alias Histoire.TVDB.{Artwork, Importer, Movie, Season, Series}
+  alias Histoire.TVDB.{Artwork, Importer, Movie, MovieArtwork, Season, Series}
 
   test "upserts a source-shaped series with seasons and artworks idempotently" do
     series = %{
@@ -77,22 +77,70 @@ defmodule Histoire.TVDB.ImporterTest do
       "id" => 199_463,
       "name" => "映画 バクテン!!",
       "slug" => "199463-",
+      "overview" => nil,
+      "image" => "https://artworks.thetvdb.com/movie-poster.jpg",
       "year" => "2022",
       "first_release" => %{"country" => "jpn", "date" => "2022-06-02"},
       "originalCountry" => "jpn",
       "originalLanguage" => "jpn",
       "runtime" => 90,
       "score" => 1048,
-      "status" => %{"id" => 5, "name" => "Released"}
+      "status" => %{"id" => 5, "name" => "Released"},
+      "translations" => %{
+        "overviewTranslations" => [
+          %{"language" => "eng", "overview" => "The gymnastics team reunites."}
+        ]
+      },
+      "artworks" => [
+        %{
+          "id" => 63_982_338,
+          "type" => 14,
+          "image" => "https://artworks.thetvdb.com/movie-poster.jpg",
+          "score" => 100_000,
+          "width" => 680,
+          "height" => 1000
+        },
+        %{
+          "id" => 63_982_339,
+          "type" => 15,
+          "image" => "https://artworks.thetvdb.com/movie-background.jpg",
+          "score" => 99_000,
+          "width" => 1920,
+          "height" => 1080
+        }
+      ]
     }
 
     assert {:ok, %Movie{id: 199_463}} = Importer.movie(movie)
 
+    updated =
+      movie
+      |> Map.put("name", "Backflip!! Movie")
+      |> Map.put("runtime", 91)
+      |> Map.put("artworks", [
+        movie
+        |> Map.fetch!("artworks")
+        |> Enum.at(1)
+        |> Map.put("score", 100_000)
+      ])
+
+    assert {:ok, %Movie{id: 199_463}} = Importer.movie(updated)
+
     assert %Movie{
-             name: "映画 バクテン!!",
+             name: "Backflip!! Movie",
              first_released: ~D[2022-06-02],
-             runtime: 90,
-             status_name: "Released"
+             runtime: 91,
+             status_name: "Released",
+             raw: %{"translations" => %{"overviewTranslations" => [_english]}}
            } = Movie.get_by_id!(199_463)
+
+    assert [
+             %MovieArtwork{
+               id: 63_982_339,
+               artwork_type: 15,
+               score: 100_000.0,
+               width: 1920
+             }
+           ] = MovieArtwork.list!()
   end
 end

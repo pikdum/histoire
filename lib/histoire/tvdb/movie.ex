@@ -42,7 +42,23 @@ defmodule Histoire.TVDB.Movie do
       ]
 
       upsert? true
-      upsert_fields {:replace, [:id, :inserted_at]}
+
+      upsert_fields [
+        :name,
+        :slug,
+        :overview,
+        :image_url,
+        :first_released,
+        :year,
+        :status_id,
+        :status_name,
+        :original_country,
+        :original_language,
+        :runtime,
+        :score,
+        :raw,
+        :fetched_at
+      ]
     end
   end
 
@@ -81,10 +97,28 @@ defmodule Histoire.TVDB.Movie do
   end
 
   relationships do
+    has_many :artworks, Histoire.TVDB.MovieArtwork do
+      public? true
+    end
+
     has_many :mappings, Histoire.Catalog.SubsPleaseTVDBShowMatch do
       destination_attribute :tvdb_id
       filter expr(tvdb_type == :movie)
       public? true
+    end
+  end
+
+  aggregates do
+    first :poster_url, :artworks, :image_url do
+      public? true
+      filter expr(artwork_type == 14)
+      sort score: :desc, id: :asc
+    end
+
+    first :fanart_url, :artworks, :image_url do
+      public? true
+      filter expr(artwork_type == 15)
+      sort score: :desc, id: :asc
     end
   end
 end

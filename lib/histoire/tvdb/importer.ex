@@ -1,28 +1,33 @@
 defmodule Histoire.TVDB.Importer do
   @moduledoc false
 
-  alias Histoire.TVDB.{Artwork, Movie, Season, Series}
+  alias Histoire.TVDB.{Artwork, Movie, MovieArtwork, Season, Series}
 
   def movie(movie) when is_map(movie) do
     status = movie["status"] || %{}
 
-    Movie.upsert(%{
-      id: movie["id"],
-      name: movie["name"],
-      slug: movie["slug"],
-      overview: movie["overview"],
-      image_url: movie["image"],
-      first_released: movie |> get_in(["first_release", "date"]) |> date(),
-      year: to_optional_string(movie["year"]),
-      status_id: status["id"],
-      status_name: status["name"],
-      original_country: movie["originalCountry"],
-      original_language: movie["originalLanguage"],
-      runtime: movie["runtime"],
-      score: movie["score"],
-      raw: movie,
-      fetched_at: DateTime.utc_now()
-    })
+    with {:ok, artworks} <- required_list(movie, "artworks"),
+         {:ok, record} <-
+           Movie.upsert(%{
+             id: movie["id"],
+             name: movie["name"],
+             slug: movie["slug"],
+             overview: movie["overview"],
+             image_url: movie["image"],
+             first_released: movie |> get_in(["first_release", "date"]) |> date(),
+             year: to_optional_string(movie["year"]),
+             status_id: status["id"],
+             status_name: status["name"],
+             original_country: movie["originalCountry"],
+             original_language: movie["originalLanguage"],
+             runtime: movie["runtime"],
+             score: movie["score"],
+             raw: movie,
+             fetched_at: DateTime.utc_now()
+           }),
+         :ok <- replace_movie_artworks(record.id, artworks) do
+      {:ok, record}
+    end
   end
 
   def series(series, artworks) when is_map(series) and is_list(artworks) do
@@ -81,23 +86,42 @@ defmodule Histoire.TVDB.Importer do
   defp replace_artworks(series_id, rows) do
     with :ok <-
            upsert_all(rows, fn row ->
-             Artwork.upsert(%{
-               id: row["id"],
-               series_id: series_id,
-               artwork_type: row["type"],
-               language: row["language"],
-               image_url: row["image"],
-               thumbnail_url: row["thumbnail"],
-               includes_text: row["includesText"],
-               score: row["score"],
-               width: row["width"],
-               height: row["height"],
-               raw: row
-             })
+             row
+             |> artwork_attributes()
+             |> Map.put(:series_id, series_id)
+             |> Artwork.upsert()
            end) do
       remove_missing(Artwork.for_series!(series_id), rows)
       :ok
     end
+  end
+
+  defp replace_movie_artworks(movie_id, rows) do
+    with :ok <-
+           upsert_all(rows, fn row ->
+             row
+             |> artwork_attributes()
+             |> Map.put(:movie_id, movie_id)
+             |> MovieArtwork.upsert()
+           end) do
+      remove_missing(MovieArtwork.for_movie!(movie_id), rows)
+      :ok
+    end
+  end
+
+  defp artwork_attributes(row) do
+    %{
+      id: row["id"],
+      artwork_type: row["type"],
+      language: row["language"],
+      image_url: row["image"],
+      thumbnail_url: row["thumbnail"],
+      includes_text: row["includesText"],
+      score: row["score"],
+      width: row["width"],
+      height: row["height"],
+      raw: row
+    }
   end
 
   defp upsert_all(rows, function) do

@@ -8,7 +8,12 @@ defmodule Histoire.Catalog.ReadModel do
 
   require Ash.Query
 
-  @catalog_load [mapping: [tvdb_series: [:fanart_url, :poster_url, :seasons], tvdb_movie: []]]
+  @catalog_load [
+    mapping: [
+      tvdb_series: [:fanart_url, :poster_url, :seasons],
+      tvdb_movie: [:fanart_url, :poster_url]
+    ]
+  ]
   @video_extensions ~w(.3gp .avi .flv .m2ts .m4v .mkv .mov .mp4 .mpeg .mpg .mts .ts .vob .webm .wmv)
 
   def list_shows(search \\ nil) do
@@ -109,8 +114,8 @@ defmodule Histoire.Catalog.ReadModel do
       media_type: :movie,
       tvdb_id: movie.id,
       overview: english_overview(movie),
-      poster_url: movie.image_url,
-      fanart_url: nil
+      poster_url: first_present(movie.poster_url, movie.image_url),
+      fanart_url: movie.fanart_url
     }
   end
 
