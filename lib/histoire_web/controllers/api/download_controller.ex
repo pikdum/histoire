@@ -22,6 +22,9 @@ defmodule HistoireWeb.Api.DownloadController do
       {:error, :invalid_nyaa_url} ->
         render_error(conn, :unprocessable_entity, "invalid Nyaa URL")
 
+      {:error, {:http_status, status, _path}} when status in [404, 410] ->
+        render_error(conn, :not_found, "Nyaa torrent not found")
+
       {:error, reason} ->
         Logger.error("Nyaa enrichment failed: #{inspect(reason)}")
         render_error(conn, :bad_gateway, "Nyaa enrichment failed")

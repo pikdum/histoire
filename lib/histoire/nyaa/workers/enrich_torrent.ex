@@ -17,8 +17,14 @@ defmodule Histoire.Nyaa.Workers.EnrichTorrent do
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => id}}) do
     case Enrichment.get_or_fetch("https://nyaa.si/view/#{id}") do
-      {:ok, _torrent} -> :ok
-      {:error, reason} -> {:error, reason}
+      {:ok, _torrent} ->
+        :ok
+
+      {:error, {:http_status, status, _path} = reason} when status in [404, 410] ->
+        {:cancel, reason}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 end
