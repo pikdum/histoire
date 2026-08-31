@@ -1,6 +1,6 @@
-# anime-data
+# histoire
 
-`anime-data` is a Phoenix and Ash service that mirrors anime metadata from SubsPlease and TVDB into PostgreSQL. Source-owned records stay in source-specific schemas, while `public` contains cross-source mappings. Background ingestion runs through AshOban and Oban, with LLM-assisted matching used to reconcile shows between sources.
+`histoire` is a Phoenix and Ash service that mirrors anime metadata from SubsPlease and TVDB into PostgreSQL. Source-owned records stay in source-specific schemas, while `public` contains cross-source mappings. Background ingestion runs through AshOban and Oban, with LLM-assisted matching used to reconcile shows between sources.
 
 <!-- usage-rules-start -->
 <!-- usage_rules-start -->

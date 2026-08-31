@@ -197,7 +197,7 @@
     "global": null,
     "strategy": null
   },
-  "repo": "Elixir.AnimeData.Repo",
+  "repo": "Elixir.Histoire.Repo",
   "schema": "public",
   "table": "mappings"
 }

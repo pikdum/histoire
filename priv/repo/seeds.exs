@@ -5,7 +5,7 @@
 # Inside the script, you can read and write to any of your
 # repositories directly:
 #
-#     AnimeData.Repo.insert!(%AnimeData.SomeSchema{})
+#     Histoire.Repo.insert!(%Histoire.SomeSchema{})
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.

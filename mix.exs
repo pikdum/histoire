@@ -1,9 +1,9 @@
-defmodule AnimeData.MixProject do
+defmodule Histoire.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :anime_data,
+      app: :histoire,
       version: "0.1.0",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -13,7 +13,7 @@ defmodule AnimeData.MixProject do
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
       listeners: [Phoenix.CodeReloader],
       consolidate_protocols: Mix.env() != :dev,
-      releases: [anime_data: [include_executables_for: [:unix]]],
+      releases: [histoire: [include_executables_for: [:unix]]],
       usage_rules: usage_rules()
     ]
   end
@@ -23,7 +23,7 @@ defmodule AnimeData.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {AnimeData.Application, []},
+      mod: {Histoire.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -43,17 +43,15 @@ defmodule AnimeData.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:absinthe_phoenix, "~> 2.0"},
       {:sourceror, "~> 1.8", only: [:dev, :test]},
       {:oban, "~> 2.0"},
       {:usage_rules, "~> 1.0", only: [:dev]},
-      {:ash_ai, "~> 0.8"},
+      {:ash_ai, "~> 1.0"},
       {:tidewave, "~> 0.9", only: [:dev]},
       {:oban_web, "~> 2.0"},
-      {:ash_oban, "~> 0.8"},
+      {:ash_oban, "~> 0.8.14"},
       {:ash_admin, "~> 1.0"},
-      {:ash_postgres, "~> 2.0"},
-      {:ash_graphql, "~> 1.0"},
+      {:ash_postgres, "~> 2.13"},
       {:ash_phoenix, "~> 2.0"},
       {:ash, "~> 3.0"},
       {:igniter, "~> 0.6", only: [:dev, :test]},
@@ -106,10 +104,10 @@ defmodule AnimeData.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ash.setup --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["compile", "tailwind anime_data", "esbuild anime_data"],
+      "assets.build": ["compile", "tailwind histoire", "esbuild histoire"],
       "assets.deploy": [
-        "tailwind anime_data --minify",
-        "esbuild anime_data --minify",
+        "tailwind histoire --minify",
+        "esbuild histoire --minify",
         "phx.digest"
       ],
       precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
@@ -132,11 +130,6 @@ defmodule AnimeData.MixProject do
             description:
               "Load when editing AshAi tools, prompt actions, structured outputs, or ReqLLM-backed Ash actions.",
             usage_rules: [:ash_ai]
-          ],
-          "ash-graphql": [
-            description:
-              "Load when editing AshGraphql domain or resource configuration, queries, mutations, subscriptions, custom types, or the generated GraphQL schema.",
-            usage_rules: [:ash_graphql]
           ],
           "phoenix-framework": [
             description:

@@ -1,4 +1,4 @@
-defmodule AnimeData.Repo.Migrations.InitialSubsplease do
+defmodule Histoire.Repo.Migrations.InitialSubsplease do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 

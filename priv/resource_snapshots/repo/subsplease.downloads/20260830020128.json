@@ -162,7 +162,7 @@
     "global": null,
     "strategy": null
   },
-  "repo": "Elixir.AnimeData.Repo",
+  "repo": "Elixir.Histoire.Repo",
   "schema": "subsplease",
   "table": "downloads"
 }

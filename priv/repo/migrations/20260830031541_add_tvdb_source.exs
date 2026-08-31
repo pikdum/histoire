@@ -1,4 +1,4 @@
-defmodule AnimeData.Repo.Migrations.AddTvdbSource do
+defmodule Histoire.Repo.Migrations.AddTvdbSource do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 

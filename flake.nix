@@ -1,5 +1,5 @@
 {
-  description = "Nix flake for the anime-data Elixir release";
+  description = "Nix flake for the histoire Elixir release";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -32,11 +32,11 @@
           src = pkgs.lib.cleanSource ./.;
         in
         beamPackages.mixRelease rec {
-          pname = "anime-data";
+          pname = "histoire";
           version = "0.1.0";
           inherit src;
 
-          mixReleaseName = "anime_data";
+          mixReleaseName = "histoire";
           removeCookie = false;
 
           env.XDG_CACHE_HOME = "/build/.cache";
@@ -44,7 +44,7 @@
           mixFodDeps = beamPackages.fetchMixDeps {
             pname = "mix-deps-${pname}";
             inherit src version;
-            hash = "sha256-bUnuAbARpOUZ3vF6+QYG+XHmzz5xzmhGtnlMtC5qUFU=";
+            hash = "sha256-7MgyJ25jRnKV8EaW9k9n87xxcAFBPSF8Sj8jPn0tjDs=";
           };
 
           nativeBuildInputs = [ pkgs.cmake ];
@@ -64,12 +64,12 @@
           preBuild = ''
             export MIX_ESBUILD_PATH="${pkgs.esbuild}/bin/esbuild"
             export MIX_TAILWIND_PATH="${pkgs.tailwindcss_4}/bin/tailwindcss"
-            mix do compile --no-deps-check + tailwind anime_data --minify + esbuild anime_data --minify + phx.digest
+            mix do compile --no-deps-check + tailwind histoire --minify + esbuild histoire --minify + phx.digest
           '';
 
           meta = with pkgs.lib; {
             description = "Source-shaped anime metadata mirror and reconciliation service";
-            mainProgram = "anime_data";
+            mainProgram = "histoire";
             platforms = platforms.linux;
           };
         };
@@ -82,7 +82,7 @@
         in
         {
           default = package;
-          anime_data = package;
+          histoire = package;
         }
       );
     };

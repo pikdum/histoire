@@ -2,11 +2,11 @@ import Config
 config :ash, policies: [show_policy_breakdowns?: true]
 
 # Configure your database
-config :anime_data, AnimeData.Repo,
+config :histoire, Histoire.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "anime_data_dev",
+  database: "histoire_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -17,7 +17,7 @@ config :anime_data, AnimeData.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :anime_data, AnimeDataWeb.Endpoint,
+config :histoire, HistoireWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {127, 0, 0, 1}],
@@ -26,8 +26,8 @@ config :anime_data, AnimeDataWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "oALfZMAwAznhBfMsr/OLhRgyt9gVCuW+9V3Po2M2CLsQ1sz5uefR/o0bFZ4xI28+",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:anime_data, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:anime_data, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:histoire, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:histoire, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -54,7 +54,7 @@ config :anime_data, AnimeDataWeb.Endpoint,
 # different ports.
 
 # Enable dev routes for dashboard and mailbox
-config :anime_data, dev_routes: true
+config :histoire, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :default_formatter, format: "[$level] $message\n"

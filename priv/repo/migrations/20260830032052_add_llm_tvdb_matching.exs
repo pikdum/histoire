@@ -1,4 +1,4 @@
-defmodule AnimeData.Repo.Migrations.AddLlmTvdbMatching do
+defmodule Histoire.Repo.Migrations.AddLlmTvdbMatching do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 

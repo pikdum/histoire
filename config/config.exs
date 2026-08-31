@@ -9,7 +9,7 @@ import Config
 
 config :ash_oban, pro?: false
 
-config :anime_data, Oban,
+config :histoire, Oban,
   engine: Oban.Engines.Basic,
   notifier: Oban.Notifiers.Postgres,
   queues: [
@@ -22,10 +22,8 @@ config :anime_data, Oban,
   ],
   lifeline: [rescue_after: {2, :hours}],
   pruner: [max_age: {1, :day}],
-  repo: AnimeData.Repo,
+  repo: Histoire.Repo,
   plugins: [{Oban.Plugins.Cron, []}]
-
-config :ash_graphql, authorize_update_destroy_with_error?: true
 
 # These enable behaviors that will become the default in the next major
 # version of Ash. Setting them now opts your application into the new
@@ -54,7 +52,6 @@ config :spark,
       section_order: [
         :admin,
         :postgres,
-        :graphql,
         :resource,
         :code_interface,
         :actions,
@@ -74,7 +71,6 @@ config :spark,
     "Ash.Domain": [
       section_order: [
         :admin,
-        :graphql,
         :resources,
         :policies,
         :authorization,
@@ -84,20 +80,20 @@ config :spark,
     ]
   ]
 
-config :anime_data,
-  ecto_repos: [AnimeData.Repo],
+config :histoire,
+  ecto_repos: [Histoire.Repo],
   generators: [timestamp_type: :utc_datetime],
-  ash_domains: [AnimeData.Catalog, AnimeData.SubsPlease, AnimeData.TVDB]
+  ash_domains: [Histoire.Catalog, Histoire.SubsPlease, Histoire.TVDB]
 
 # Configure the endpoint
-config :anime_data, AnimeDataWeb.Endpoint,
+config :histoire, HistoireWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [html: AnimeDataWeb.ErrorHTML, json: AnimeDataWeb.ErrorJSON],
+    formats: [html: HistoireWeb.ErrorHTML, json: HistoireWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: AnimeData.PubSub,
+  pubsub_server: Histoire.PubSub,
   live_view: [signing_salt: "fj2HTu1e"]
 
 # Configure LiveView
@@ -112,13 +108,13 @@ config :phoenix_live_view,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :anime_data, AnimeData.Mailer, adapter: Swoosh.Adapters.Local
+config :histoire, Histoire.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.25.4",
   path: System.get_env("MIX_ESBUILD_PATH"),
-  anime_data: [
+  histoire: [
     args:
       ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
     cd: Path.expand("../assets", __DIR__),
@@ -129,7 +125,7 @@ config :esbuild,
 config :tailwind,
   version: "4.3.0",
   path: System.get_env("MIX_TAILWIND_PATH"),
-  anime_data: [
+  histoire: [
     args: ~w(
       --input=assets/css/app.css
       --output=priv/static/assets/css/app.css

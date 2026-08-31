@@ -24,8 +24,8 @@
       CREATE ROLE postgres SUPERUSER LOGIN PASSWORD 'postgres';
     '';
     initialDatabases = [
-      { name = "anime_data_dev"; }
-      { name = "anime_data_test"; }
+      { name = "histoire_dev"; }
+      { name = "histoire_test"; }
     ];
   };
 

@@ -23,7 +23,7 @@ devenv.local.yaml
 erl_crash.dump
 *.ez
 /tmp/
-anime_data-*.tar
+histoire-*.tar
 /result
 
 # Generated frontend assets

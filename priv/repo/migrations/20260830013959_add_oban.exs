@@ -1,4 +1,4 @@
-defmodule AnimeData.Repo.Migrations.AddOban do
+defmodule Histoire.Repo.Migrations.AddOban do
   use Ecto.Migration
 
   def up, do: Oban.Migration.up()

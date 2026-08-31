@@ -1,4 +1,4 @@
-defmodule AnimeData.Repo.Migrations.AllowSharedTvdbMappings do
+defmodule Histoire.Repo.Migrations.AllowSharedTvdbMappings do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 

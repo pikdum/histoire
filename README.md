@@ -1,6 +1,6 @@
-# anime-data
+# histoire
 
-`anime-data` mirrors anime metadata into PostgreSQL so clients can query one local API instead of repeatedly hitting upstream sites. Source schemas remain source-shaped; `public` holds reconciliation data that does not belong to one upstream.
+`histoire` mirrors anime metadata into PostgreSQL so clients can query one local API instead of repeatedly hitting upstream sites. Source schemas remain source-shaped; `public` holds reconciliation data that does not belong to one upstream.
 
 ## Data flow
 
@@ -23,8 +23,6 @@ mix phx.server
 
 Useful endpoints:
 
-- GraphQL: `http://localhost:4000/gql`
-- GraphiQL: `http://localhost:4000/gql/playground`
 - AshAdmin: `http://localhost:4000/admin`
 - Oban Web: `http://localhost:4000/oban`
 - health: `http://localhost:4000/health`
@@ -32,17 +30,17 @@ Useful endpoints:
 Run an initial discovery pass from IEx. Pending mappings are scheduled automatically by their AshOban trigger:
 
 ```elixir
-AnimeData.SubsPlease.Sync.discover()
+Histoire.SubsPlease.Sync.discover()
 ```
 
-`ANIME_DATA_MATCHING_MODEL` accepts any ReqLLM model specification. The default is `openai_codex:gpt-5.6-luna`. Development can read a native Codex `auth.json` through `CODEX_AUTH_FILE`. For deployment, use `REQ_LLM_OAUTH_FILE` pointing at a writable secret/state file with an `openai-codex` entry; ReqLLM may refresh it in place, so do not put it in the immutable Nix store.
+`HISTOIRE_MATCHING_MODEL` accepts any ReqLLM model specification. The default is `openai_codex:gpt-5.6-luna`. Development can read a native Codex `auth.json` through `CODEX_AUTH_FILE`. For deployment, use `REQ_LLM_OAUTH_FILE` pointing at a writable secret/state file with an `openai-codex` entry; ReqLLM may refresh it in place, so do not put it in the immutable Nix store.
 
 ## Nix release
 
 Build the self-contained OTP release for the current system:
 
 ```sh
-nix build .#anime_data
+nix build .#histoire
 ```
 
 Production configuration:
@@ -50,13 +48,13 @@ Production configuration:
 - `PHX_SERVER=true`, `PHX_HOST`, `PORT`, and `SECRET_KEY_BASE`
 - either `DATABASE_URL`, or `DATABASE_SOCKET_DIR` plus optional `DATABASE_NAME`/`DATABASE_USER`
 - `TVDB_API_KEY`
-- `ANIME_DATA_MATCHING_MODEL` and its provider credentials
+- `HISTOIRE_MATCHING_MODEL` and its provider credentials
 - `ADMIN_USERNAME` and `ADMIN_PASSWORD` to expose `/admin` and `/oban`
 
 Run migrations before starting a new release:
 
 ```sh
-bin/anime_data eval "AnimeData.Release.migrate()"
+bin/histoire eval "Histoire.Release.migrate()"
 ```
 
-The flake exposes both `packages.<system>.default` and `packages.<system>.anime_data`, ready to consume as a flake input from the NixOS configuration.
+The flake exposes both `packages.<system>.default` and `packages.<system>.histoire`, ready to consume as a flake input from the NixOS configuration.

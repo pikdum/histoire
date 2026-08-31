@@ -1,13 +1,13 @@
 import Config
 
-config :anime_data, :tvdb_api_key, System.get_env("TVDB_API_KEY")
-config :anime_data, :brave_search_api_key, System.get_env("BRAVE_SEARCH_API_KEY")
+config :histoire, :tvdb_api_key, System.get_env("TVDB_API_KEY")
+config :histoire, :brave_search_api_key, System.get_env("BRAVE_SEARCH_API_KEY")
 
-config :anime_data,
+config :histoire,
        :matching_model,
-       System.get_env("ANIME_DATA_MATCHING_MODEL", "openai_codex:gpt-5.6-luna")
+       System.get_env("HISTOIRE_MATCHING_MODEL", "openai_codex:gpt-5.6-luna")
 
-config :anime_data,
+config :histoire,
        :codex_auth_file,
        System.get_env("CODEX_AUTH_FILE", Path.expand("~/.codex/auth.json"))
 
@@ -27,20 +27,20 @@ end
 # If you use `mix release`, you need to explicitly enable the server
 # by passing the PHX_SERVER=true when you start it:
 #
-#     PHX_SERVER=true bin/anime_data start
+#     PHX_SERVER=true bin/histoire start
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
 if System.get_env("PHX_SERVER") do
-  config :anime_data, AnimeDataWeb.Endpoint, server: true
+  config :histoire, HistoireWeb.Endpoint, server: true
 end
 
-config :anime_data, AnimeDataWeb.Endpoint,
+config :histoire, HistoireWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
 if config_env() == :dev do
   # Reload browser tabs when matching files change.
-  config :anime_data, AnimeDataWeb.Endpoint,
+  config :histoire, HistoireWeb.Endpoint,
     live_reload: [
       web_console_logger: true,
       patterns: [
@@ -49,8 +49,8 @@ if config_env() == :dev do
         # Gettext translations
         ~r"priv/gettext/.*\.po$"E,
         # Router, Controllers, LiveViews and LiveComponents
-        ~r"lib/anime_data_web/router\.ex$"E,
-        ~r"lib/anime_data_web/(controllers|live|components)/.*\.(ex|heex)$"E
+        ~r"lib/histoire_web/router\.ex$"E,
+        ~r"lib/histoire_web/(controllers|live|components)/.*\.(ex|heex)$"E
       ]
     ]
 end
@@ -72,13 +72,13 @@ if config_env() == :prod do
       socket_dir ->
         [
           socket_dir: socket_dir,
-          database: System.get_env("DATABASE_NAME", "anime_data"),
-          username: System.get_env("DATABASE_USER", "anime_data")
+          database: System.get_env("DATABASE_NAME", "histoire"),
+          username: System.get_env("DATABASE_USER", "histoire")
         ]
     end
 
-  config :anime_data,
-         AnimeData.Repo,
+  config :histoire,
+         Histoire.Repo,
          repo_connection ++ [pool_size: String.to_integer(System.get_env("POOL_SIZE", "10"))]
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
@@ -95,9 +95,9 @@ if config_env() == :prod do
 
   host = System.get_env("PHX_HOST") || "example.com"
 
-  config :anime_data, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
+  config :histoire, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
-  config :anime_data, AnimeDataWeb.Endpoint,
+  config :histoire, HistoireWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
       # Enable IPv6 and bind on all interfaces.
@@ -113,7 +113,7 @@ if config_env() == :prod do
   # To get SSL working, you will need to add the `https` key
   # to your endpoint configuration:
   #
-  #     config :anime_data, AnimeDataWeb.Endpoint,
+  #     config :histoire, HistoireWeb.Endpoint,
   #       https: [
   #         ...,
   #         port: 443,
@@ -135,7 +135,7 @@ if config_env() == :prod do
   # We also recommend setting `force_ssl` in your config/prod.exs,
   # ensuring no data is ever sent via http, always redirecting to https:
   #
-  #     config :anime_data, AnimeDataWeb.Endpoint,
+  #     config :histoire, HistoireWeb.Endpoint,
   #       force_ssl: [hsts: true]
   #
   # Check `Plug.SSL` for all available options in `force_ssl`.
@@ -145,7 +145,7 @@ if config_env() == :prod do
   # In production you need to configure the mailer to use a different adapter.
   # Here is an example configuration for Mailgun:
   #
-  #     config :anime_data, AnimeData.Mailer,
+  #     config :histoire, Histoire.Mailer,
   #       adapter: Swoosh.Adapters.Mailgun,
   #       api_key: System.get_env("MAILGUN_API_KEY"),
   #       domain: System.get_env("MAILGUN_DOMAIN")
