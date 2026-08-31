@@ -68,7 +68,15 @@ defmodule HistoireWeb.Api.ShowControllerTest do
       release_id: release.id,
       resolution: "1080",
       torrent_url: "https://nyaa.si/view/1/torrent",
-      magnet_uri: "magnet:?xt=urn:btih:VS6Z5XS3WA2W6JGECOMYC5N2KVRIBJBD"
+      magnet_uri:
+        "magnet:?xt=urn:btih:VS6Z5XS3WA2W6JGECOMYC5N2KVRIBJBD" <>
+          "&dn=Example%20S2%20-%2012&xl=1234" <>
+          "&tr=http%3A%2F%2Fnyaa.tracker.wf%3A7777%2Fannounce" <>
+          "&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce" <>
+          "&tr=udp%3A%2F%2Fopen.stealth.si%3A80%2Fannounce" <>
+          "&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce" <>
+          "&tr=udp%3A%2F%2Ftracker.torrent.eu.org%3A451%2Fannounce" <>
+          "&tr=udp%3A%2F%2Fextra.invalid%3A80%2Fannounce"
     })
 
     ScheduleEntry.upsert!(%{
@@ -102,6 +110,8 @@ defmodule HistoireWeb.Api.ShowControllerTest do
       get_in(detail, ["data", "releases", Access.at(0), "downloads", Access.at(0), "magnet_uri"])
 
     assert magnet =~ "urn:btih:acbd9ede5bb0356f24c413998175ba556280a423"
+    refute magnet =~ "xl="
+    assert length(Regex.scan(~r/(?:^|&)tr=/, magnet)) == 5
   end
 
   test "returns the recurring schedule in UTC with resolved show metadata", %{conn: conn} do

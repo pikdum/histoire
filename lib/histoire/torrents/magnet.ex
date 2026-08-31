@@ -1,8 +1,15 @@
 defmodule Histoire.Torrents.Magnet do
-  @moduledoc "Canonicalizes BitTorrent info hashes without discarding magnet parameters."
+  @moduledoc "Canonicalizes BitTorrent magnets and shapes them for provider compatibility."
 
   @base32_hash_length 32
   @hex_hash_length 40
+  @nyaa_trackers [
+    "http://nyaa.tracker.wf:7777/announce",
+    "udp://open.stealth.si:80/announce",
+    "udp://tracker.opentrackr.org:1337/announce",
+    "udp://exodus.desync.com:6969/announce",
+    "udp://tracker.torrent.eu.org:451/announce"
+  ]
 
   def canonicalize(uri) when is_binary(uri) do
     with "magnet:?" <> query <- uri,
@@ -16,10 +23,30 @@ defmodule Histoire.Torrents.Magnet do
 
   def canonicalize(_uri), do: {:error, :invalid_magnet_uri}
 
+  def canonicalize_for_nyaa(uri) do
+    with {:ok, canonical} <- canonicalize(uri),
+         "magnet:?" <> query <- canonical,
+         {:ok, params} <- decode_query(query),
+         {:ok, xt} <- first_param(params, "xt"),
+         {:ok, dn} <- first_param(params, "dn") do
+      trackers = Enum.map(@nyaa_trackers, &{"tr", &1})
+      {:ok, "magnet:?" <> encode_query([xt, dn | trackers])}
+    else
+      _reason -> {:error, :invalid_magnet_uri}
+    end
+  end
+
   def canonicalize_or_original(uri) do
     case canonicalize(uri) do
       {:ok, canonical} -> canonical
       {:error, _reason} -> uri
+    end
+  end
+
+  def canonicalize_for_nyaa_or_original(uri) do
+    case canonicalize_for_nyaa(uri) do
+      {:ok, canonical} -> canonical
+      {:error, _reason} -> canonicalize_or_original(uri)
     end
   end
 
@@ -70,6 +97,13 @@ defmodule Histoire.Torrents.Magnet do
       end)
 
     updated
+  end
+
+  defp first_param(params, key) do
+    case Enum.find(params, &(elem(&1, 0) == key)) do
+      nil -> {:error, {:missing_param, key}}
+      param -> {:ok, param}
+    end
   end
 
   defp encode_query(params) do

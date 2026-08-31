@@ -138,7 +138,7 @@ defmodule Histoire.Catalog.ReadModel do
       id: download.id,
       resolution: download.resolution,
       torrent_url: download.torrent_url,
-      magnet_uri: Magnet.canonicalize_or_original(download.magnet_uri)
+      magnet_uri: Magnet.canonicalize_for_nyaa_or_original(download.magnet_uri)
     }
   end
 
