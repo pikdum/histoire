@@ -18,9 +18,6 @@ defmodule Histoire.AI.Config do
       Application.get_env(:histoire, :matching_base_url) ->
         [api_key: Application.fetch_env!(:histoire, :matching_api_key)]
 
-      oauth_file = Application.get_env(:req_llm, :oauth_file) ->
-        [provider_options: [auth_mode: :oauth, oauth_file: oauth_file]]
-
       credentials = native_codex_credentials() ->
         [
           provider_options: [

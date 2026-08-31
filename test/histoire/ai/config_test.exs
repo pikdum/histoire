@@ -3,7 +3,7 @@ defmodule Histoire.AI.ConfigTest do
 
   alias Histoire.AI.Config
 
-  test "builds an OpenAI-compatible model for a configured proxy" do
+  test "builds the configured OpenAI-compatible proxy model and options" do
     previous =
       Map.new([:matching_model, :matching_base_url, :matching_api_key], fn key ->
         {key, Application.get_env(:histoire, key)}
@@ -43,36 +43,22 @@ defmodule Histoire.AI.ConfigTest do
     )
 
     previous_auth_file = Application.get_env(:histoire, :codex_auth_file)
-    previous_oauth_file = Application.get_env(:req_llm, :oauth_file)
+    previous_base_url = Application.get_env(:histoire, :matching_base_url)
 
     on_exit(fn ->
       File.rm(path)
       restore_env(:histoire, :codex_auth_file, previous_auth_file)
-      restore_env(:req_llm, :oauth_file, previous_oauth_file)
+      restore_env(:histoire, :matching_base_url, previous_base_url)
     end)
 
+    Application.delete_env(:histoire, :matching_base_url)
     Application.put_env(:histoire, :codex_auth_file, path)
-    Application.delete_env(:req_llm, :oauth_file)
 
     assert Config.req_llm_opts() == [
              provider_options: [
                auth_mode: :oauth,
                access_token: "test-access",
                chatgpt_account_id: "test-account"
-             ]
-           ]
-  end
-
-  test "prefers a ReqLLM-managed OAuth file when configured" do
-    previous = Application.get_env(:req_llm, :oauth_file)
-    on_exit(fn -> restore_env(:req_llm, :oauth_file, previous) end)
-
-    Application.put_env(:req_llm, :oauth_file, "/run/credentials/histoire-oauth.json")
-
-    assert Config.req_llm_opts() == [
-             provider_options: [
-               auth_mode: :oauth,
-               oauth_file: "/run/credentials/histoire-oauth.json"
              ]
            ]
   end

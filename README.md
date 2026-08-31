@@ -42,7 +42,7 @@ Run an initial discovery pass from IEx. Pending mappings are scheduled automatic
 Histoire.SubsPlease.Sync.discover()
 ```
 
-`HISTOIRE_MATCHING_MODEL` accepts any ReqLLM model specification. The default is `openai_codex:gpt-5.6-luna`. Development can read a native Codex `auth.json` through `CODEX_AUTH_FILE`. For deployment, use `REQ_LLM_OAUTH_FILE` pointing at a writable secret/state file with an `openai-codex` entry; ReqLLM may refresh it in place, so do not put it in the immutable Nix store.
+`HISTOIRE_MATCHING_MODEL` accepts any ReqLLM model specification. Local development defaults to `openai_codex:gpt-5.6-luna` and reads the native Codex `auth.json` through `CODEX_AUTH_FILE`. Production uses an OpenAI-compatible proxy configured with `HISTOIRE_MATCHING_BASE_URL` and `HISTOIRE_MATCHING_API_KEY`; the API key may be a non-secret placeholder when access is authenticated by the network layer, as it is for the tailnet-only Aperture deployment.
 
 ## Nix release
 
@@ -57,7 +57,7 @@ Production configuration:
 - `PHX_SERVER=true`, `PHX_HOST`, `PORT`, and `SECRET_KEY_BASE`
 - either `DATABASE_URL`, or `DATABASE_SOCKET_DIR` plus optional `DATABASE_NAME`/`DATABASE_USER`
 - `TVDB_API_KEY`
-- `HISTOIRE_MATCHING_MODEL` and its provider credentials
+- `HISTOIRE_MATCHING_MODEL`, `HISTOIRE_MATCHING_BASE_URL`, and `HISTOIRE_MATCHING_API_KEY`
 - `ADMIN_USERNAME` and `ADMIN_PASSWORD` to expose `/admin` and `/oban`
 
 Run migrations before starting a new release:

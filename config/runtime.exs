@@ -14,10 +14,6 @@ config :histoire,
        :codex_auth_file,
        System.get_env("CODEX_AUTH_FILE", Path.expand("~/.codex/auth.json"))
 
-if oauth_file = System.get_env("REQ_LLM_OAUTH_FILE") || System.get_env("REQ_LLM_AUTH_FILE") do
-  config :req_llm, :oauth_file, oauth_file
-end
-
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
 # system starts, so it is typically used to load production configuration
