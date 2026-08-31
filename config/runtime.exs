@@ -7,6 +7,9 @@ config :histoire,
        :matching_model,
        System.get_env("HISTOIRE_MATCHING_MODEL", "openai_codex:gpt-5.6-luna")
 
+config :histoire, :matching_base_url, System.get_env("HISTOIRE_MATCHING_BASE_URL")
+config :histoire, :matching_api_key, System.get_env("HISTOIRE_MATCHING_API_KEY")
+
 config :histoire,
        :codex_auth_file,
        System.get_env("CODEX_AUTH_FILE", Path.expand("~/.codex/auth.json"))

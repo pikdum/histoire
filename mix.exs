@@ -46,6 +46,7 @@ defmodule Histoire.MixProject do
       {:sourceror, "~> 1.8", only: [:dev, :test]},
       {:oban, "~> 2.0"},
       {:usage_rules, "~> 1.0", only: [:dev]},
+      {:req_llm, "~> 1.21"},
       {:ash_ai, "~> 1.0"},
       {:tidewave, "~> 0.9", only: [:dev]},
       {:oban_web, "~> 2.0"},

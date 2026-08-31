@@ -2,15 +2,22 @@ defmodule Histoire.AI.Config do
   @moduledoc false
 
   def model do
-    Application.get_env(
-      :histoire,
-      :matching_model,
-      "openai_codex:gpt-5.6-luna"
-    )
+    model = Application.get_env(:histoire, :matching_model, "openai_codex:gpt-5.6-luna")
+
+    case Application.get_env(:histoire, :matching_base_url) do
+      base_url when is_binary(base_url) ->
+        ReqLLM.model!(%{provider: :openai, id: model, base_url: base_url})
+
+      _base_url ->
+        model
+    end
   end
 
   def req_llm_opts do
     cond do
+      Application.get_env(:histoire, :matching_base_url) ->
+        [api_key: Application.fetch_env!(:histoire, :matching_api_key)]
+
       oauth_file = Application.get_env(:req_llm, :oauth_file) ->
         [provider_options: [auth_mode: :oauth, oauth_file: oauth_file]]
 
