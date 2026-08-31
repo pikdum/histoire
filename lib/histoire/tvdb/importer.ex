@@ -6,7 +6,7 @@ defmodule Histoire.TVDB.Importer do
   def movie(movie) when is_map(movie) do
     status = movie["status"] || %{}
 
-    with {:ok, artworks} <- required_list(movie, "artworks"),
+    with {:ok, artworks} <- nullable_list(movie, "artworks"),
          {:ok, record} <-
            Movie.upsert(%{
              id: movie["id"],
@@ -156,6 +156,15 @@ defmodule Histoire.TVDB.Importer do
 
   defp required_list(map, key) do
     case Map.fetch(map, key) do
+      {:ok, value} when is_list(value) -> {:ok, value}
+      {:ok, value} -> {:error, {:invalid_collection, key, value}}
+      :error -> {:error, {:missing_collection, key}}
+    end
+  end
+
+  defp nullable_list(map, key) do
+    case Map.fetch(map, key) do
+      {:ok, nil} -> {:ok, []}
       {:ok, value} when is_list(value) -> {:ok, value}
       {:ok, value} -> {:error, {:invalid_collection, key, value}}
       :error -> {:error, {:missing_collection, key}}

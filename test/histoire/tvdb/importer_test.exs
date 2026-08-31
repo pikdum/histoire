@@ -142,5 +142,12 @@ defmodule Histoire.TVDB.ImporterTest do
                width: 1920
              }
            ] = MovieArtwork.list!()
+
+    assert {:ok, %Movie{id: 199_463}} =
+             updated
+             |> Map.put("artworks", nil)
+             |> Importer.movie()
+
+    assert MovieArtwork.list!() == []
   end
 end
