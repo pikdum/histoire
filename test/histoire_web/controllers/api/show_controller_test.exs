@@ -69,7 +69,6 @@ defmodule HistoireWeb.Api.ShowControllerTest do
         kind: :episode,
         name: "Example S2 - 12v2",
         episode: "12v2",
-        source_date: ~D[2026-08-30],
         released_at: now
       })
 
@@ -115,6 +114,8 @@ defmodule HistoireWeb.Api.ShowControllerTest do
     assert summary["latest_episode"] == "Example S2 - 12"
 
     detail = conn |> recycle() |> get(~p"/api/v1/shows/#{show.id}") |> json_response(200)
+
+    assert get_in(detail, ["data", "releases", Access.at(0), "release_date"]) == "2026-08-30"
 
     magnet =
       get_in(detail, ["data", "releases", Access.at(0), "downloads", Access.at(0), "magnet_uri"])

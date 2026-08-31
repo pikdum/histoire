@@ -78,4 +78,36 @@ defmodule Histoire.SubsPlease.ImporterTest do
     assert [%Release{} = stored] = Release.list!()
     assert [%{resolution: "1080"}] = Ash.load!(stored, :downloads).downloads
   end
+
+  test "derives the source date from the release timestamp while SubsPlease says New" do
+    assert {:ok, _show} =
+             Importer.show(%{
+               id: 824,
+               slug: "acro-trip",
+               name: "Acro Trip",
+               fetched_at: ~U[2026-08-30 00:00:00Z]
+             })
+
+    assert {:ok, 1} =
+             Importer.releases(824, [
+               %{
+                 kind: :episode,
+                 name: "Acro Trip - 13",
+                 raw: %{
+                   "time" => "New",
+                   "release_date" => "Mon, 31 Aug 2026 21:02:12 +0800",
+                   "episode" => "13",
+                   "downloads" => []
+                 }
+               }
+             ])
+
+    assert [
+             %Release{
+               source_date: ~D[2026-08-31],
+               released_at: ~U[2026-08-31 13:02:12.000000Z]
+             }
+           ] =
+             Release.list!()
+  end
 end

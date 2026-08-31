@@ -142,7 +142,7 @@ defmodule Histoire.Catalog.ReadModel do
       kind: release.kind,
       name: release.name,
       episode: release.episode,
-      release_date: iso_date(release.source_date),
+      release_date: release_date(release),
       released_at: iso_datetime(release.released_at),
       downloads:
         release.downloads
@@ -247,10 +247,17 @@ defmodule Histoire.Catalog.ReadModel do
     Ash.Query.filter(query, expr(contains(string_downcase(name), ^search)))
   end
 
-  defp iso_date(nil), do: nil
   defp iso_date(date), do: Date.to_iso8601(date)
   defp iso_datetime(nil), do: nil
   defp iso_datetime(datetime), do: DateTime.to_iso8601(datetime)
+
+  defp release_date(%{source_date: %Date{} = date}), do: iso_date(date)
+
+  defp release_date(%{released_at: %DateTime{} = released_at}) do
+    released_at |> DateTime.to_date() |> iso_date()
+  end
+
+  defp release_date(_release), do: nil
 
   defp first_present(values) when is_list(values), do: Enum.find(values, &present?/1)
   defp first_present(first, second), do: first_present([first, second])

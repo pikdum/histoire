@@ -63,7 +63,7 @@ defmodule Histoire.SubsPlease.Importer do
              kind: kind,
              name: name,
              episode: to_string(row["episode"]),
-             source_date: source_date,
+             source_date: source_date || date(released_at),
              released_at: released_at,
              raw_time: row["time"],
              raw: row
@@ -145,4 +145,7 @@ defmodule Histoire.SubsPlease.Importer do
       :error -> {:error, {:missing_collection, key}}
     end
   end
+
+  defp date(nil), do: nil
+  defp date(datetime), do: DateTime.to_date(datetime)
 end
