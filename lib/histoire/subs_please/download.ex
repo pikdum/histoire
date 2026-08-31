@@ -5,6 +5,9 @@ defmodule Histoire.SubsPlease.Download do
     extensions: [AshAdmin.Resource],
     data_layer: AshPostgres.DataLayer
 
+  def nyaa_target(%__MODULE__{nyaa_download_override: %{nyaa_id: nyaa_id}}), do: nyaa_id
+  def nyaa_target(%__MODULE__{} = download), do: download.torrent_url
+
   postgres do
     schema "subsplease"
     table "downloads"
@@ -61,6 +64,11 @@ defmodule Histoire.SubsPlease.Download do
   relationships do
     belongs_to :release, Histoire.SubsPlease.Release do
       allow_nil? false
+      public? true
+    end
+
+    has_one :nyaa_download_override, Histoire.Catalog.SubsPleaseNyaaDownloadOverride do
+      destination_attribute :subsplease_download_id
       public? true
     end
   end

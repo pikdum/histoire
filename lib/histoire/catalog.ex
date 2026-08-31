@@ -7,6 +7,7 @@ defmodule Histoire.Catalog do
 
   resources do
     resource Histoire.Catalog.SubsPleaseTVDBShowMatch
+    resource Histoire.Catalog.SubsPleaseNyaaDownloadOverride
     resource Histoire.Catalog.Matcher
   end
 end

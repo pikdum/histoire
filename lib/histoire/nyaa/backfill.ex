@@ -2,7 +2,7 @@ defmodule Histoire.Nyaa.Backfill do
   @moduledoc "Enqueues the highest-resolution Nyaa torrent for every known SubsPlease batch."
 
   alias Histoire.Nyaa.Jobs
-  alias Histoire.SubsPlease.Release
+  alias Histoire.SubsPlease.{Download, Release}
 
   require Ash.Query
 
@@ -12,7 +12,7 @@ defmodule Histoire.Nyaa.Backfill do
     query =
       Release
       |> Ash.Query.filter(kind == :batch)
-      |> Ash.Query.load(:downloads)
+      |> Ash.Query.load(downloads: [:nyaa_download_override])
 
     with {:ok, releases} <- Ash.read(query) do
       releases
@@ -20,7 +20,7 @@ defmodule Histoire.Nyaa.Backfill do
       |> Enum.reject(&is_nil/1)
       |> Enum.with_index()
       |> Enum.reduce_while({:ok, 0}, fn {download, index}, {:ok, count} ->
-        case Jobs.enqueue_torrent(download.torrent_url,
+        case Jobs.enqueue_torrent(Download.nyaa_target(download),
                priority: 0,
                schedule_in: index * @spacing_seconds
              ) do

@@ -8,9 +8,10 @@ defmodule HistoireWeb.Api.DownloadController do
   require Logger
 
   def files(conn, %{"id" => id}) do
-    with {:ok, download} <- Download.get_by_id(id, load: :release),
+    with {:ok, download} <-
+           Download.get_by_id(id, load: [:release, :nyaa_download_override]),
          :ok <- ensure_batch(download),
-         {:ok, torrent} <- Enrichment.get_or_fetch(download.torrent_url) do
+         {:ok, torrent} <- Enrichment.get_or_fetch(Download.nyaa_target(download)) do
       json(conn, %{data: ReadModel.download_files(torrent)})
     else
       {:error, %Ash.Error.Query.NotFound{}} ->

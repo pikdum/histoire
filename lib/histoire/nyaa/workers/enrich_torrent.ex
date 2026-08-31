@@ -16,7 +16,7 @@ defmodule Histoire.Nyaa.Workers.EnrichTorrent do
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"id" => id}}) do
-    case Enrichment.get_or_fetch("https://nyaa.si/view/#{id}") do
+    case Enrichment.get_or_fetch(id) do
       {:ok, _torrent} ->
         :ok
 
