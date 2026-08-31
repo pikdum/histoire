@@ -19,11 +19,12 @@ defmodule Histoire.Nyaa.Enrichment do
 
     with {:ok, html} <- Client.fetch_torrent(id),
          {:ok, parsed} <- Parser.torrent(html) do
-      persist(id, page_url, parsed)
+      store(id, page_url, parsed)
     end
   end
 
-  defp persist(id, page_url, parsed) do
+  @doc false
+  def store(id, page_url, parsed) do
     Ash.transact([Torrent, File], fn ->
       with {:ok, torrent} <-
              Torrent.upsert(%{
@@ -35,7 +36,7 @@ defmodule Histoire.Nyaa.Enrichment do
              }),
            :ok <- upsert_files(torrent.id, parsed.files),
            {:ok, loaded} <- Ash.load(torrent, :files) do
-        {:ok, loaded}
+        loaded
       end
     end)
   end
