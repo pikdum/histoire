@@ -17,6 +17,7 @@ defmodule Histoire.SubsPlease.Download do
 
   code_interface do
     define :upsert
+    define :get_by_id, action: :read, get_by: [:id]
     define :destroy
   end
 

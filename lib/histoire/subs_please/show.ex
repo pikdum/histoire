@@ -76,6 +76,14 @@ defmodule Histoire.SubsPlease.Show do
     end
   end
 
+  aggregates do
+    first :latest_episode, :releases, :name do
+      public? true
+      filter expr(kind == :episode)
+      sort released_at: :desc
+    end
+  end
+
   identities do
     identity :unique_slug, [:slug]
   end

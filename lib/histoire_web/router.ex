@@ -33,6 +33,15 @@ defmodule HistoireWeb.Router do
     get "/health", HealthController, :index
   end
 
+  scope "/api/v1", HistoireWeb.Api do
+    pipe_through :api
+
+    get "/shows", ShowController, :index
+    get "/shows/:id", ShowController, :show
+    get "/schedule", ScheduleController, :index
+    get "/downloads/:id/files", DownloadController, :files
+  end
+
   scope "/" do
     pipe_through [:browser, :admin_auth]
 

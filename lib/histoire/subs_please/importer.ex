@@ -1,6 +1,8 @@
 defmodule Histoire.SubsPlease.Importer do
   @moduledoc false
 
+  require Logger
+
   alias Histoire.Catalog.Mapping
   alias Histoire.SubsPlease.{DateParser, Download, Parser, Release, ScheduleEntry, Show}
 
@@ -66,7 +68,8 @@ defmodule Histoire.SubsPlease.Importer do
              raw_time: row["time"],
              raw: row
            }),
-         :ok <- downloads(release.id, downloads) do
+         :ok <- downloads(release.id, downloads),
+         :ok <- maybe_enqueue_nyaa(kind, downloads) do
       {:ok, release}
     end
   end
@@ -106,6 +109,34 @@ defmodule Histoire.SubsPlease.Importer do
       :ok
     end
   end
+
+  defp maybe_enqueue_nyaa(:batch, downloads) do
+    case Enum.max_by(downloads, &resolution/1, fn -> nil end) do
+      %{"torrent" => torrent_url} when is_binary(torrent_url) ->
+        case Histoire.Nyaa.Jobs.enqueue_torrent(torrent_url) do
+          {:ok, _job} ->
+            :ok
+
+          {:error, error} ->
+            Logger.warning("could not enqueue Nyaa enrichment: #{inspect(error)}")
+            :ok
+        end
+
+      _download ->
+        :ok
+    end
+  end
+
+  defp maybe_enqueue_nyaa(_kind, _downloads), do: :ok
+
+  defp resolution(%{"res" => value}) do
+    case value |> to_string() |> Integer.parse() do
+      {resolution, _suffix} -> resolution
+      :error -> 0
+    end
+  end
+
+  defp resolution(_download), do: 0
 
   defp required_list(map, key) do
     case Map.fetch(map, key) do

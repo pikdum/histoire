@@ -26,6 +26,15 @@ Useful endpoints:
 - AshAdmin: `http://localhost:4000/admin`
 - Oban Web: `http://localhost:4000/oban`
 - health: `http://localhost:4000/health`
+- shows: `http://localhost:4000/api/v1/shows`
+- show detail: `http://localhost:4000/api/v1/shows/:id`
+- schedule: `http://localhost:4000/api/v1/schedule`
+- cached Nyaa batch files: `http://localhost:4000/api/v1/downloads/:id/files`
+
+The public API is intentionally a small client read model rather than an exposure of the source
+schemas. SubsPlease names and release IDs remain stable for client watch history, while TVDB
+contributes synopsis and artwork. BitTorrent info hashes are normalized to lowercase hex; Nyaa
+is fetched only for batch file lists and cached in its own source schema.
 
 Run an initial discovery pass from IEx. Pending mappings are scheduled automatically by their AshOban trigger:
 

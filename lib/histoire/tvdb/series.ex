@@ -117,4 +117,18 @@ defmodule Histoire.TVDB.Series do
       public? true
     end
   end
+
+  aggregates do
+    first :poster_url, :artworks, :image_url do
+      public? true
+      filter expr(artwork_type == 2)
+      sort score: :desc, id: :asc
+    end
+
+    first :fanart_url, :artworks, :image_url do
+      public? true
+      filter expr(artwork_type == 3)
+      sort score: :desc, id: :asc
+    end
+  end
 end

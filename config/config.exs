@@ -16,6 +16,7 @@ config :histoire, Oban,
     schedulers: 2,
     subsplease_poll: 1,
     subsplease_fetch: 1,
+    nyaa_fetch: 1,
     tvdb_match: 1,
     tvdb_fetch: 1,
     default: 5
@@ -83,7 +84,7 @@ config :spark,
 config :histoire,
   ecto_repos: [Histoire.Repo],
   generators: [timestamp_type: :utc_datetime],
-  ash_domains: [Histoire.Catalog, Histoire.SubsPlease, Histoire.TVDB]
+  ash_domains: [Histoire.Catalog, Histoire.Nyaa, Histoire.SubsPlease, Histoire.TVDB]
 
 # Configure the endpoint
 config :histoire, HistoireWeb.Endpoint,

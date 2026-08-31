@@ -1,6 +1,7 @@
 import Config
 config :histoire, Oban, testing: :manual
 config :histoire, :subsplease_request_interval_ms, 0
+config :histoire, :nyaa_request_interval_ms, 0
 config :ash, policies: [show_policy_breakdowns?: true], disable_async?: true
 
 # Configure your database

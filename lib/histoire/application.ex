@@ -10,6 +10,7 @@ defmodule Histoire.Application do
     children = [
       HistoireWeb.Telemetry,
       Histoire.Repo,
+      Histoire.Nyaa.RateLimiter,
       Histoire.SubsPlease.RateLimiter,
       Histoire.TVDB.RateLimiter,
       Histoire.TVDB.TokenStore,
